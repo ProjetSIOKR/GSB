@@ -43,7 +43,8 @@ use Outils\Utilitaires;
 
 require '../config/bdd.php';
 
-class PdoGsb {
+class PdoGsb
+{
 
     protected $connexion;
     private static $instance = null;
@@ -86,6 +87,7 @@ class PdoGsb {
      *
      * @return l'id, le nom et le prénom sous la forme d'un tableau associatif
      */
+
     public function getInfosUtilisateur($login): array|bool
     {
         $requetePrepare = $this->connexion->prepare(
@@ -227,7 +229,9 @@ class PdoGsb {
      *
      * @return un tableau associatif
      */
-    public function getLesIdFrais(): array {
+
+    public function getLesIdFrais(): array
+    {
         $requetePrepare = $this->connexion->prepare(
                 'SELECT fraisforfait.id as idfrais '
                 . 'FROM fraisforfait ORDER BY fraisforfait.id'
@@ -503,5 +507,4 @@ class PdoGsb {
         $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->execute();
     }
-   
 }

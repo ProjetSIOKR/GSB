@@ -16,6 +16,7 @@
  */
 
 ?>
+
 <div id="accueil">
     <h2>
         Gestion des frais<small> - Visiteur : 

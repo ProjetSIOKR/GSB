@@ -1,2 +1,2 @@
-# GSB
-Application de gestion de frais
+# Projet-GSB
+ 

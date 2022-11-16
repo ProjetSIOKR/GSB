@@ -49,6 +49,15 @@ CREATE TABLE IF NOT EXISTS role (
     PRIMARY KEY (id)
 )ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS securisationConnexion (
+    id char(4) NOT NULL,
+    tentative_mdp_id int(5) NOT NULL,
+    tentative_a2f int(5) NOT NULL,
+    bloque boolean NOT NULL default false,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES utilisateur(id)
+)ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS utilisateur (
   id char(4) NOT NULL,
   nom char(30) DEFAULT NULL,
@@ -142,3 +151,9 @@ INSERT INTO utilisateur (id, nom, prenom, login, mdp, adresse, cp, ville, dateem
 ('f21', 'Finck', 'Jacques', 'jfinck', 'mpb3t', '10 avenue du Prado', '13002', 'Marseille', '2001-11-10',0),
 ('f39', 'Frémont', 'Fernande', 'ffremont', 'xs5tq', '4 route de la mer', '13012', 'Allauh', '1998-10-01',0),
 ('f4', 'Gest', 'Alain', 'agest', 'dywvt', '30 avenue de la mer', '13025', 'Berre', '1985-11-01',0);
+
+ALTER TABLE utilisateur
+MODIFY mdp VARCHAR(255) ;
+ALTER TABLE utilisateur ADD email TEXT NULL;
+UPDATE utilisateur SET email = CONCAT(login,"@swiss-galaxy.com");
+ALTER TABLE utilisateur ADD code CHAR(4);

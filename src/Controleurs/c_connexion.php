@@ -33,18 +33,26 @@ switch ($action) {
         $securisationUtilisateur = $pdo->getInfosSecurisationConnexion($id);
         $securisationUtilisateurBloque = $pdo->getInfosSecurisationConnexionBloque($id);
         if($securisationUtilisateurBloque['bloque'] == 1){
-            Utilitaires::ajouterErreur("Votre compte est bloqué, veuillez attendre 1 minute avant de réessayer");
+             $pdo->updateTentativeMDP_A2F($id);
+             Utilitaires::ajouterErreur("Votre compte est débloqué, vous pouvez réessayer !"); //Votre compte est bloqué, veuillez attendre 2 minute avant de réessayer
             include PATH_VIEWS . 'v_erreurs.php';
             include PATH_VIEWS . 'v_connexion.php';
+            sleep(10);
+            
+
         }else{
              if (!password_verify($mdp, $pdo->getMdpUtilisateur($login))) {
                     if(!empty($securisationUtilisateur)){
-                      if($securisationUtilisateur['tentative_mdp_id'] == 5){
+                      if($securisationUtilisateur['tentative_mdp_id'] == 2){
                           $pdo->updateTentativeBloque($id);
+                                Utilitaires::ajouterErreur("Derniere tentative avant que votre compte soit bloqué pendant 2 minutes");
+                                 
+                                //Votre compte est bloqué, veuillez attendre 1 minute avant de réessayer
                     }else{
                         Utilitaires::ajouterErreur('Login ou mot de passe incorrect');
                          $pdo->updateTentativeMDP($id);
                     }
+                   // Utilitaires::ajouterErreur('erreur');
                 }else{
                     $pdo->insertTentativeMDP($id);
                      Utilitaires::ajouterErreur('Login ou mot de passe incorrect');
@@ -66,6 +74,11 @@ switch ($action) {
                 include  PATH_VIEWS . 'v_code2facteurs.php';
             }
         }
+        //DATE_ADD(date, INTERVAL expr type) //DATEDIFF(date1,date2)
+        //DATEDIFF(Now(),DATE_ADD(Now(), INTERVAL 60 seconds)
+        // Tache chrone en base de donnée
+        //Mettre un timer sur la page et dès que le timeur arrive a 0 faire une modifier la base et mettre a 0
+        // sleep() 
         break; 
         
     case 'valideA2fConnexion':

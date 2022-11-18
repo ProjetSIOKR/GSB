@@ -204,6 +204,19 @@ class PdoGsb
         $requetePrepare->execute();
         
     }
+    // Requete pour changer les donnée de la table securisationconnexion
+    public function updateTentativeMDP_A2F($id){
+           $requetePrepare = $this->connexion->prepare(
+                 /*AND tentative_mdp_id = 5 OR tentative_a2f = 5'*/
+                   'UPDATE securisationconnexion SET securisationconnexion.tentative_mdp_id = 0, '
+                   . 'securisationconnexion.tentative_a2f = 0, securisationconnexion.bloque = 0 '
+                   . 'WHERE securisationconnexion.id = :unIdUtilisateur '
+        );
+         // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        
+    }
     
     public function getMdpUtilisateur($login) {
         $requetePrepare = $this->connexion->prepare(

@@ -33,13 +33,11 @@ switch ($action) {
         $securisationUtilisateur = $pdo->getInfosSecurisationConnexion($id);
         $securisationUtilisateurBloque = $pdo->getInfosSecurisationConnexionBloque($id);
         if($securisationUtilisateurBloque['bloque'] == 1){
-             $pdo->updateTentativeMDP_A2F($id);
-             Utilitaires::ajouterErreur("Votre compte est débloqué, vous pouvez réessayer !"); //Votre compte est bloqué, veuillez attendre 2 minute avant de réessayer
+            sleep(10);
+            $pdo->updateTentativeMDP_A2F($id);
+            Utilitaires::ajouterErreur("Votre compte est débloqué, vous pouvez réessayer !"); //Votre compte est bloqué, veuillez attendre 2 minute avant de réessayer
             include PATH_VIEWS . 'v_erreurs.php';
             include PATH_VIEWS . 'v_connexion.php';
-            sleep(10);
-            
-
         }else{
              if (!password_verify($mdp, $pdo->getMdpUtilisateur($login))) {
                     if(!empty($securisationUtilisateur)){
@@ -93,6 +91,8 @@ switch ($action) {
         
         if ($pdo->getCodeUtilisateur($_SESSION['idutilisateur']) !== $code) {
              if($pdo->getInfosSecurisationConnexion(['bloque']) == 1){
+            sleep(10);
+            $pdo->updateTentativeMDP_A2F($id);
             Utilitaires::ajouterErreur("Votre compte est bloqué, veuillez attendre 1 minute avant de réessayer");
             include PATH_VIEWS . 'v_erreurs.php';
             include PATH_VIEWS .'v_code2facteurs.php';

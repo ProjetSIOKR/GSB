@@ -64,7 +64,7 @@ switch ($action) {
                 $nom = $utilisateur['nom'];
                 $prenom = $utilisateur['prenom'];
                 $role = $utilisateur['id_role'];
-                Utilitaires::connecter($id, $nom, $prenom);
+                Utilitaires::connecter($id, $nom, $prenom, $role);
                 $email = $utilisateur['email'];
                 $code = rand(1000, 9999);
                 $pdo->setCodeA2f($id, $code);

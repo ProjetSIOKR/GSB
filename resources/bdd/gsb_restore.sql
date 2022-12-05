@@ -20,14 +20,14 @@ Sécurité mot de passe:
 -- Script de restauration de l'application "GSB Frais"
 
 -- Administration de la base de données
-CREATE DATABASE gsb_frais_VersionProjet ;
+CREATE DATABASE gsb_frais ;
 GRANT SHOW DATABASES ON *.* TO visiteur@localhost IDENTIFIED BY 'visiteur';
-GRANT ALL PRIVILEGES ON `gsb_frais_VersionProjet`.* TO visiteur@localhost;
+GRANT ALL PRIVILEGES ON `gsb_frais`.* TO visiteur@localhost;
 
 GRANT SHOW DATABASES ON *.* TO comptable@localhost IDENTIFIED BY 'comptable';
-GRANT ALL PRIVILEGES ON `gsb_frais_VersionProjet`.* TO comptable@localhost;
+GRANT ALL PRIVILEGES ON `gsb_frais`.* TO comptable@localhost;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-USE gsb_frais_VersionProjet ;
+USE gsb_frais ;
 
 -- Création de la structure de la base de données
 CREATE TABLE IF NOT EXISTS fraisforfait (
@@ -49,15 +49,6 @@ CREATE TABLE IF NOT EXISTS role (
     PRIMARY KEY (id)
 )ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS securisationConnexion (
-     id int NOT NULL,
-    tentative_mdp_id int(5) DEFAULT 0,
-    tentative_a2f int(5) DEFAULT 0,
-    bloque boolean NOT NULL default false,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES utilisateur(id)
-)ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS utilisateur (
   id int NOT NULL AUTO_INCREMENT,
   nom char(30) DEFAULT NULL,
@@ -72,6 +63,15 @@ CREATE TABLE IF NOT EXISTS utilisateur (
   PRIMARY KEY (id),
   FOREIGN KEY (id_role) REFERENCES role(id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS securisationConnexion (
+     id int NOT NULL,
+    tentative_mdp_id int(5) DEFAULT 0,
+    tentative_a2f int(5) DEFAULT 0,
+    bloque boolean NOT NULL default false,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES utilisateur(id)
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS fichefrais (
   idutilisateur int NOT NULL,

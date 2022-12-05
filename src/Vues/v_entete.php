@@ -44,48 +44,74 @@
                         </h1>
                     </div>
                      <style>
-                         /* Permet de changer les couleurs en orange
-                        .nav-pills > li.comptableColor > a,
-                            .nav-pills > li.comptableColor > a:hover,
-                            .nav-pills > li.comptableColor > a:focus {
-                              background-color: orange!important;
+                         .nav-pills > li.comptableColor > a{
+                              color: orange!important;
+                              text-decoration: none;
+                            }
+                        .nav-pills > li.comptableColor > a:hover, .nav-pills > li.comptableColor > a:focus{
+                              color: orange!important;
+                              background-color: #eee;     
+                            }
+                       .comptableActive>a,.comptableActive>a:hover,.comptableActive>a:focus{
                               color: white!important;
-                              
+                              background-color: orange!important;
                             }
-                            
-                            .comptableColor_a {
-                                color: orange!important;
-                                text-decoration: none;
-                            }
-                            */
+                           
                     </style>
                     <div class="col-md-8">
                         <ul class="nav nav-pills pull-right" role="tablist">
-                            <li <?php if (!$uc || $uc == 'accueil') { ?>class="active" <?php } ?>>
-                                <a href="index.php">
-                                    <span class="glyphicon glyphicon-home"></span>
-                                    Accueil
-                                </a>
-                            </li>
-                            <li <?php if ($uc == 'gererFrais') { ?>class="active"<?php } ?>>
-                                <a href="index.php?uc=gererFrais&action=saisirFrais">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                    Renseigner la fiche de frais
-                                </a>
-                            </li>
-                            <li <?php if ($uc == 'etatFrais') { ?>class="active"<?php } ?>>
-                                <a href="index.php?uc=etatFrais&action=selectionnerMois">
-                                    <span class="glyphicon glyphicon-list-alt"></span>
-                                    Afficher mes fiches de frais
-                                </a>
-                            </li>
-                            <li 
-                            <?php if ($uc == 'deconnexion') { ?>class="active"<?php } ?>>
-                                <a href="index.php?uc=deconnexion&action=demandeDeconnexion">
-                                    <span class="glyphicon glyphicon-log-out"></span>
-                                    Déconnexion
-                                </a>
-                            </li>
+                            <?php if($_SESSION['role'] == 1){
+                                ?>
+                                <li <?php if (!$uc || $uc == 'accueil') { ?>class="comptableActive"<?php }else{ ?>class="comptableColor" <?php }?>>
+                                    <a href="index.php">
+                                        Accueil
+                                    </a>
+                                </li>
+                                <li <?php if ($uc == 'gererFrais') { ?>class="comptableActive"<?php }else{ ?>class="comptableColor" <?php }?>>
+                                    <a href="index.php?uc=gererFrais&action=saisirFrais">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                       Valider fiche de frais
+                                    </a>
+                                </li>
+                                <li <?php if ($uc == 'etatFrais') { ?>class="comptableActive"<?php }else{ ?>class="comptableColor" <?php }?>>
+                                    <a href="index.php?uc=etatFrais&action=selectionnerMois">
+                                        <span class="glyphicon glyphicon-eur"></span>
+                                        Suivre le paiement 
+                                    </a>
+                                </li>
+                                <li <?php if ($uc == 'deconnexion') { ?>class="comptableActive"<?php }else{ ?>class="comptableColor" <?php }?>>
+                                    <a href="index.php?uc=deconnexion&action=demandeDeconnexion">
+                                        Déconnexion
+                                    </a>
+                                </li>
+                            <?php } else {
+                                ?>
+                                <li <?php if (!$uc || $uc == 'accueil') { ?>class="active" <?php } ?>>
+                                    <a href="index.php">
+                                        <span class="glyphicon glyphicon-home"></span>
+                                        Accueil
+                                    </a>
+                                </li>
+                                <li <?php if ($uc == 'gererFrais') { ?>class="active"<?php } ?>>
+                                    <a href="index.php?uc=gererFrais&action=saisirFrais">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                        Renseigner la fiche de frais
+                                    </a>
+                                </li>
+                                <li <?php if($uc == 'etatFrais') { ?>class="active"<?php } ?>>
+                                    <a href="index.php?uc=etatFrais&action=selectionnerMois">
+                                        <span class="glyphicon glyphicon-list-alt"></span>
+                                        Afficher mes fiches de frais
+                                    </a>
+                                </li>
+                                <li 
+                                <?php if ($uc == 'deconnexion') { ?>class="active"<?php } ?>>
+                                    <a href="index.php?uc=deconnexion&action=demandeDeconnexion">
+                                        <span class="glyphicon glyphicon-log-out"></span>
+                                        Déconnexion
+                                    </a>
+                                </li>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>

@@ -41,10 +41,11 @@ abstract class Utilitaires {
      *
      * @return null
      */
-    public static function connecter($idUtilisateur, $nom, $prenom): void {
+    public static function connecter($idUtilisateur, $nom, $prenom, $role): void {
         $_SESSION['idutilisateur'] = $idUtilisateur;
         $_SESSION['nom'] = $nom;
         $_SESSION['prenom'] = $prenom;
+        $_SESSION['role'] = $role;
     }
 
     /**

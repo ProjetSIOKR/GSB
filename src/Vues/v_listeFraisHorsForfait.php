@@ -46,6 +46,12 @@
                             Supprimer ce frais
                         </a>
                     </td>
+                    <td>
+                        <a href="index.php?uc=gererFrais&action=updateFrais&idFrais=<?php echo $id ?>" 
+                           onclick="return confirm('Voulez-vous vraiment modifier ce frais?');">
+                            Modifier ce frais
+                        </a>
+                    </td>
                 </tr>
                 <?php
             }

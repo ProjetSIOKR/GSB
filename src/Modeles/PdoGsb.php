@@ -365,7 +365,7 @@ class PdoGsb
             $requetePrepare = $this->connexion->prepare(
                     'UPDATE lignefraisforfait '
                     . 'SET lignefraisforfait.quantite = :uneQte '
-                    . 'WHERE lignefraisforfait.idvisiteur = :unIdVisiteur '
+                    . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
                     . 'AND lignefraisforfait.mois = :unMois '
                     . 'AND lignefraisforfait.idfraisforfait = :idFrais'
             );

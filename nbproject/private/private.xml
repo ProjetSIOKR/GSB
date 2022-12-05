@@ -12,21 +12,21 @@
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/config/bdd.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Vues/v_pied.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/.gitignore</file>
-            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Controleurs/c_accueil.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/bin/gendatas/majGSB.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/public/index.php</file>
-            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/resources/bdd/gsb_restore.sql</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Vues/v_erreurs.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Vues/v_listeFraisHorsForfait.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Controleurs/c_deconnexion.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/bin/gendatas/fonctions.php</file>
-            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/resources/Outils/Utilitaires.php</file>
-            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Controleurs/c_connexion.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Vues/v_connexion.php</file>
-            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Modeles/PdoGsb.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Controleurs/c_gererFrais.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Vues/v_listeMois.php</file>
             <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/resources/bdd/gsb_restore_V2.sql</file>
+            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Controleurs/c_connexion.php</file>
+            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/resources/Outils/Utilitaires.php</file>
+            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Modeles/PdoGsb.php</file>
+            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/src/Controleurs/c_accueil.php</file>
+            <file>file:/C:/Users/kilian.breton/Desktop/Cours/GIL/Projet%20Gestion%20de%20Version/GSB-VersionProjet/resources/bdd/gsb_restore.sql</file>
         </group>
     </open-files>
 </project-private>

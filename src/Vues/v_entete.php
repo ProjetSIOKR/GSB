@@ -43,6 +43,22 @@
                                  title="Laboratoire Galaxy-Swiss Bourdin">
                         </h1>
                     </div>
+                     <style>
+                         /* Permet de changer les couleurs en orange
+                        .nav-pills > li.comptableColor > a,
+                            .nav-pills > li.comptableColor > a:hover,
+                            .nav-pills > li.comptableColor > a:focus {
+                              background-color: orange!important;
+                              color: white!important;
+                              
+                            }
+                            
+                            .comptableColor_a {
+                                color: orange!important;
+                                text-decoration: none;
+                            }
+                            */
+                    </style>
                     <div class="col-md-8">
                         <ul class="nav nav-pills pull-right" role="tablist">
                             <li <?php if (!$uc || $uc == 'accueil') { ?>class="active" <?php } ?>>

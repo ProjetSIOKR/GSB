@@ -2,7 +2,7 @@
 
 ?>
 
-<div class="alert alert-info" role="alert">Un email contenant un code à 4 chiffres vous a été envoyé, merci de le saisir ici...</div>
+<div class="alert alert-info" role="alert">Un email contenant un code vous a été envoyé, merci de le saisir ici...</div>
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <div class="panel panel-default">

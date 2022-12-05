@@ -69,6 +69,7 @@ switch ($action) {
                 $code = rand(1000, 9999);
                 $pdo->setCodeA2f($id, $code);
                 mail($email, '[GSB-AppliFrais] Code de vérification', "Code : $code");
+              
                 include  PATH_VIEWS . 'v_code2facteurs.php';
             }
         }
@@ -81,36 +82,46 @@ switch ($action) {
         
     case 'valideA2fConnexion':
         $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $id = $_SESSION['idutilisateur'];
         
-           $login = filter_input(INPUT_POST, 'login', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $mdp = filter_input(INPUT_POST, 'mdp', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $utilisateur = $pdo->getInfosUtilisateur($login);
-        $id = $utilisateur['id'];
         $securisationUtilisateur = $pdo->getInfosSecurisationConnexion($id);
         $securisationUtilisateurBloque = $pdo->getInfosSecurisationConnexionBloque($id);
-        
         if ($pdo->getCodeUtilisateur($_SESSION['idutilisateur']) !== $code) {
-             if($pdo->getInfosSecurisationConnexion(['bloque']) == 1){
+         if($securisationUtilisateurBloque['bloque'] == 1){
             sleep(10);
             $pdo->updateTentativeMDP_A2F($id);
-            Utilitaires::ajouterErreur("Votre compte est bloqué, veuillez attendre 1 minute avant de réessayer");
+            Utilitaires::ajouterErreur("Votre compte est débloqué, vous pouvez réessayer !"); //Votre compte est bloqué, veuillez attendre 2 minute avant de réessayer
             include PATH_VIEWS . 'v_erreurs.php';
             include PATH_VIEWS .'v_code2facteurs.php';
         }else{
-             if($pdo->getInfosSecurisationConnexion(['tentative_a2f']) == 5){
+                    if(!empty($securisationUtilisateur)){
+                      if($securisationUtilisateur['tentative_a2f'] == 2){
                           $pdo->updateTentativeBloque($id);
+                                Utilitaires::ajouterErreur("Derniere tentative avant que votre compte soit bloqué pendant 2 minutes");
+                                 
+                                //Votre compte est bloqué, veuillez attendre 1 minute avant de réessayer
                     }else{
-                          Utilitaires::ajouterErreur('Code de vérification incorrect');
+                      Utilitaires::ajouterErreur('Code de vérification incorrect');
                          $pdo->updateTentativeCodeA2f($id);
                     }
-
-            include PATH_VIEWS . 'v_erreurs.php';
-            include PATH_VIEWS .'v_code2facteurs.php';
+                   // Utilitaires::ajouterErreur('erreur');
+                }else{
+                    $pdo->insertTentativeMDP($id);
+                     Utilitaires::ajouterErreur('Code a2f non valide');
+                }
+                include PATH_VIEWS . 'v_erreurs.php';
+                include PATH_VIEWS .'v_code2facteurs.php';
+               
         }
         }else {
             Utilitaires::connecterA2f($code);
             header('Location: index.php');
         }
+        /*
+        else {
+            Utilitaires::connecterA2f($code);
+            header('Location: index.php');
+        }*/
         break;
     default:
         include PATH_VIEWS . 'v_connexion.php';

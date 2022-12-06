@@ -115,9 +115,9 @@ class PdoGsb
     {
         $requetePrepare = $this->connexion->prepare(
                 'SELECT utilisateur.id AS id, utilisateur.nom AS nom, '
-                . 'utilisateur.prenom AS prenom, utilisateur.mdp AS mdp '
+                . 'utilisateur.prenom AS prenom '
                 . 'FROM utilisateur '
-                . 'WHERE id_role=0'
+                . 'WHERE id_role=0 '
         );
         $requetePrepare->execute();
         return $requetePrepare->fetchAll();
@@ -365,7 +365,7 @@ class PdoGsb
             $requetePrepare = $this->connexion->prepare(
                     'UPDATE lignefraisforfait '
                     . 'SET lignefraisforfait.quantite = :uneQte '
-                    . 'WHERE lignefraisforfait.idvisiteur = :unIdVisiteur '
+                    . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
                     . 'AND lignefraisforfait.mois = :unMois '
                     . 'AND lignefraisforfait.idfraisforfait = :idFrais'
             );

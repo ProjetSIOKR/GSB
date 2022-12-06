@@ -27,6 +27,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./styles/bootstrap/bootstrap.css" rel="stylesheet">
         <link href="./styles/style.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     </head>
     <body>
         <div class="container">
@@ -56,6 +57,9 @@
                               color: white!important;
                               background-color: orange!important;
                             }
+                       .orange{
+                            color: orange;
+                       }
                            
                     </style>
                     <div class="col-md-8">
@@ -68,7 +72,7 @@
                                     </a>
                                 </li>
                                 <li <?php if ($uc == 'gererFrais') { ?>class="comptableActive"<?php }else{ ?>class="comptableColor" <?php }?>>
-                                    <a href="index.php?uc=gererFrais&action=saisirFrais">
+                                    <a href="index.php?uc=gererFrais&action=validerFrais">
                                         <span class="glyphicon glyphicon-ok"></span>
                                        Valider fiche de frais
                                     </a>

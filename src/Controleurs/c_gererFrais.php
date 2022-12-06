@@ -49,13 +49,19 @@ switch ($action) {
         } else {
             $pdo->creeNouveauFraisHorsForfait($idutilisateur, $mois, $libelle, $dateFrais, $montant);
         }
+    case 'validerFrais':
+        $lesVisiteurs = $pdo->getInfosAllVisiteur();
+
         break;
     case 'supprimerFrais':
         $idFrais = filter_input(INPUT_GET, 'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->supprimerFraisHorsForfait($idFrais);
         break;
 }
-$lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idutilisateur, $mois);
-$lesFraisForfait = $pdo->getLesFraisForfait($idutilisateur, $mois);
+
+if(!isset($lesFraisHorsForfait) && !isset($lesFraisForfait)){
+    $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idutilisateur, $mois);
+    $lesFraisForfait = $pdo->getLesFraisForfait($idutilisateur, $mois);
+}
 require PATH_VIEWS . 'v_listeFraisForfait.php';
 require PATH_VIEWS . 'v_listeFraisHorsForfait.php';

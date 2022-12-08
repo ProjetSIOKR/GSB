@@ -34,25 +34,27 @@
             foreach ($lesFraisHorsForfait as $unFraisHorsForfait) {
                 $libelle = htmlspecialchars($unFraisHorsForfait['libelle']);
                 $date = $unFraisHorsForfait['date'];
+               // $mois = $unFraisHorsForfait['mois'];
                 $montant = $unFraisHorsForfait['montant'];
-                $id = $unFraisHorsForfait['id']; ?>           
+                $idFrais = $unFraisHorsForfait['id']; ?>  
+              <form action="index.php?uc=gererFrais&action=updateFrais&idFrais=<?php echo $idFrais ?>" 
+              method="post" role="form">
                 <tr>
-                    <td> <?php echo $date ?></td>
-                    <td> <?php echo $libelle ?></td>
-                    <td><?php echo $montant ?></td>
+                    <!--<td><input type="text" name="date"/> <?php/* echo $date */?></td>-->
+                    <td><input type="text" name="idFrais" value="<?php echo $idFrais?>" hidden/><input type="text" name="dateFrais" value="<?php echo  $date ?>"/> </td>
+                    <td><input type="text" name="libelle" value="<?php echo $libelle ?>"/></td>
+                    <td><input type="text" name="montant" value="<?php echo $montant?>"/></td>
                     <td>
-                        <a href="index.php?uc=gererFrais&action=supprimerFrais&idFrais=<?php echo $id ?>" 
+                        <a href="index.php?uc=gererFrais&action=supprimerFrais&idFrais=<?php echo $idFrais ?>" 
                            onclick="return confirm('Voulez-vous vraiment supprimer ce frais?');">
                             Supprimer ce frais
                         </a>
                     </td>
                     <td>
-                        <a href="index.php?uc=gererFrais&action=updateFrais&idFrais=<?php echo $id ?>" 
-                           onclick="return confirm('Voulez-vous vraiment modifier ce frais?');">
-                            Modifier ce frais
-                        </a>
+                        <button type='submit' onclick="return confirm('Voulez-vous vraiment appliquer les modifications faite sur ce frais?');"> modifier</button>                        
                     </td>
                 </tr>
+                 </form>
                 <?php
             }
             ?>

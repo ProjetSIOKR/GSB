@@ -531,7 +531,32 @@ class PdoGsb
         $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
         $requetePrepare->execute();
     }
-
+    
+    
+/**
+     * modifier le frais hors forfait dont l'id est passé en argument
+     *
+     * @param String $idFrais ID du frais
+     * @param String $libelle    Libellé du frais
+     * @param String $dateFrais       Date du frais au format français jj//mm/aaaa
+     * @param Float  $montant    Montant du frais
+     *
+     * @return null
+     */
+    public function updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant): void {
+        $dateFr = Utilitaires::dateFrancaisVersAnglais($dateFrais);
+        $requetePrepare = $this->connexion->prepare(
+                'UPDATE lignefraishorsforfait '
+                . 'SET libelle = :unLibelle, date = :uneDateFr, montant = :unMontant '
+                . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+        );
+        $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unLibelle', $libelle, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':uneDateFr', $dateFr, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unMontant', $montant, PDO::PARAM_INT);
+        $requetePrepare->execute();
+    }
+    
     /**
      * Retourne les mois pour lesquel un visiteur a une fiche de frais
      *

@@ -54,6 +54,14 @@ switch ($action) {
         $idFrais = filter_input(INPUT_GET, 'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->supprimerFraisHorsForfait($idFrais);
         break;
+    case 'updateFrais':
+        $idFrais = filter_input(INPUT_GET, 'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $libelle = filter_input(INPUT_POST, 'libelle', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $montant = filter_input(INPUT_POST, 'montant', FILTER_VALIDATE_FLOAT);
+        $dateFrais =  filter_input(INPUT_POST, 'dateFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant);
+      //  include PATH_VIEWS . 'v_listeFraisHorsForfait.php';
+        break;
 }
 $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idutilisateur, $mois);
 $lesFraisForfait = $pdo->getLesFraisForfait($idutilisateur, $mois);

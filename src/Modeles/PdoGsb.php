@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Classe d'accès aux données.
  *
@@ -137,9 +136,9 @@ class PdoGsb
     //Récuperer les infos de la table securisationconnexion
      public function getInfosSecurisationConnexion($id) {
         $requetePrepare = $this->connexion->prepare(
-                'SELECT securisationconnexion.id, securisationconnexion.tentative_mdp_id, securisationconnexion.bloque, securisationconnexion.tentative_a2f '
-                . 'FROM securisationconnexion '
-                . 'WHERE securisationconnexion.id = :unId'
+                'SELECT securisationConnexion.id, securisationConnexion.tentative_mdp_id, securisationConnexion.bloque, securisationConnexion.tentative_a2f '
+                . 'FROM securisationConnexion '
+                . 'WHERE securisationConnexion.id = :unId'
         );
         // INSERT INTO securisationconnexion (id) SELECT utilisateur.id FROM utilisateur;
         $requetePrepare->bindParam(':unId', $id, PDO::PARAM_INT);
@@ -149,9 +148,9 @@ class PdoGsb
     
      public function getInfosSecurisationConnexionBloque($id) {
         $requetePrepare = $this->connexion->prepare(
-                'SELECT securisationconnexion.bloque '
-                . 'FROM securisationconnexion '
-                . 'WHERE securisationconnexion.id = :unId'
+                'SELECT securisationConnexion.bloque '
+                . 'FROM securisationConnexion '
+                . 'WHERE securisationConnexion.id = :unId'
         );
         // INSERT INTO securisationconnexion (id) SELECT utilisateur.id FROM utilisateur;
         $requetePrepare->bindParam(':unId', $id, PDO::PARAM_BOOL);
@@ -161,9 +160,9 @@ class PdoGsb
     //Modifier la colum securisation mdp
      public function updateTentativeMDP($id) {
         $requetePrepare = $this->connexion->prepare(
-                'UPDATE securisationconnexion '
+                'UPDATE securisationConnexion '
                 . 'SET tentative_mdp_id = tentative_mdp_id+1 '
-                . 'WHERE securisationconnexion.id = :unIdUtilisateur'
+                . 'WHERE securisationConnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
@@ -173,9 +172,9 @@ class PdoGsb
     //Modifier la colum securisation mdp
      public function updateTentativeCodeA2f($id) {
         $requetePrepare = $this->connexion->prepare(
-                'UPDATE securisationconnexion '
+                'UPDATE securisationConnexion '
                 . 'SET tentative_a2f = tentative_a2f+1 '
-                . 'WHERE securisationconnexion.id = :unIdUtilisateur'
+                . 'WHERE securisationConnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
@@ -184,7 +183,7 @@ class PdoGsb
     // Méthode pour insert
      public function insertTentativeMDP($id) {
                  $requetePrepare = $this->connexion->prepare(
-                'INSERT INTO securisationconnexion (id,tentative_mdp_id)'
+                'INSERT INTO securisationConnexion (id,tentative_mdp_id)'
                 . 'VALUES (:unIdUtilisateur,1)'
         );
           //$requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -195,9 +194,9 @@ class PdoGsb
 
     public function updateTentativeBloque($id){
            $requetePrepare = $this->connexion->prepare(
-                'UPDATE securisationconnexion '
+                'UPDATE securisationConnexion '
                 . 'SET bloque = 1 '
-                . 'WHERE securisationconnexion.id = :unIdUtilisateur'
+                . 'WHERE securisationConnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
@@ -208,9 +207,9 @@ class PdoGsb
     public function updateTentativeMDP_A2F($id){
            $requetePrepare = $this->connexion->prepare(
                  /*AND tentative_mdp_id = 5 OR tentative_a2f = 5'*/
-                   'UPDATE securisationconnexion SET securisationconnexion.tentative_mdp_id = 0, '
-                   . 'securisationconnexion.tentative_a2f = 0, securisationconnexion.bloque = 0 '
-                   . 'WHERE securisationconnexion.id = :unIdUtilisateur '
+                   'UPDATE securisationConnexion SET securisationConnexion.tentative_mdp_id = 0, '
+                   . 'securisationConnexion.tentative_a2f = 0, securisationConnexion.bloque = 0 '
+                   . 'WHERE securisationConnexion.id = :unIdUtilisateur '
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
@@ -603,7 +602,7 @@ class PdoGsb
      */
     public function majEtatFicheFrais($idVisiteur, $mois, $etat): void {
         $requetePrepare = $this->connexion->prepare(
-                'UPDATE ficheFrais '
+                'UPDATE fichefrais '
                 . 'SET idetat = :unEtat, datemodif = now() '
                 . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
                 . 'AND fichefrais.mois = :unMois'

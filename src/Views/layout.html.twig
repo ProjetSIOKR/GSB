@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <title>Intranet du Laboratoire Galaxy-Swiss Bourdin</title>
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/styles/bootstrap/bootstrap.css" rel="stylesheet">
+        <link href="/styles/style.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class='container'>
+            {% block entete %}{% endblock %}
+            {% block contenu %}{% endblock %}
+            {% block javascript %}{% endblock %}
+        </div>
+    </body>
+</html>

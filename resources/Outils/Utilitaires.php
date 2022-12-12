@@ -17,6 +17,8 @@
 
 namespace Outils;
 
+use Outils\MyTwig;
+
 abstract class Utilitaires {
 
     /**
@@ -28,7 +30,8 @@ abstract class Utilitaires {
         return isset($_SESSION['idutilisateur']) && isset($_SESSION['code']);
     }
 
-    public static function connecterA2f($code) {
+    public static function connecterA2f($code): void
+    {
         $_SESSION['code'] = $code;
     }
 
@@ -239,6 +242,15 @@ abstract class Utilitaires {
             return 0;
         } else {
             return count($_REQUEST['erreurs']);
+        }
+    }
+
+    public static function redirectTo($url): void
+    {
+        if(!headers_sent()){
+            header('Location '.$url);
+        }else{
+            MyTwig::afficheVue('redirection.html.twig', array('url' => $url));
         }
     }
 

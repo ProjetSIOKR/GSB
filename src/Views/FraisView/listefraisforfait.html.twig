@@ -1,0 +1,48 @@
+<div class="alert alert-danger" role="alert" id="errorsFrais"></div>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post"
+              action="/gererfrais/validermajfraisforfait"
+              id="formFrais"
+              role="form">
+            <fieldset>
+                {% for frais in lesFrais %}
+                    <div class="form-group">
+                        <label for ="{{ frais.idfrais }}">{{ frais.libelle|e }}</label>
+                        <input type="text" id="lesFrais"
+                               name="LesFrais[{{ frais.idfrais }}]"
+                               size="10" maxlenght="5"
+                               value="{{ frais.quantite }}"
+                               class="form-control">
+                    </div>
+                {% endfor %}
+                <button class="btn btn-success" type="submit" id="validerFrais">Ajouter</button>
+                <button class="btn btn-danger" type="reset">Effacer</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script>
+    const errors = document.querySelector('#errorsFrais');
+    const bouttonFrais = document.querySelector('#validerFrais');
+    const formFrais = document.querySelector('#formFrais');
+    const lesFrais = document.querySelector('#lesFrais');
+    errors.style.display="none";
+    lesFrais.addEventListener('change', () => {
+        let messages = [];
+        if (lesFrais.value === null || isNaN(lesFrais.value)) {
+            bouttonFrais.style.visibility = "hidden";
+            messages.push('Les valeurs des frais doivent être numériques');
+            errors.style.display = "block";
+        } else {
+            bouttonFrais.style.visibility = "visible";
+            errors.style.display = "none";
+        }
+    });
+    if(messages.length > 0){
+        formFrais.addEventListener("submit", (e) => {
+            e.preventDefault();
+        });
+        errors.innerText = messages.join(', ');
+    }
+</script>

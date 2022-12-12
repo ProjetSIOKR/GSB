@@ -41,6 +41,8 @@ switch ($action) {
         }else{
              if (!password_verify($mdp, $pdo->getMdpUtilisateur($login))) {
                     if(!empty($securisationUtilisateur)){
+                        error_log("Une tentative de connexion sur l'utilisateur : " . $login . " d'une machine aillant l'adresse IP : " . 
+                                filter_input(INPUT_SERVER, 'REMOTE_ADDR'));
                       if($securisationUtilisateur['tentative_mdp_id'] == 2){
                           $pdo->updateTentativeBloque($id);
                                 Utilitaires::ajouterErreur("Derniere tentative avant que votre compte soit bloqué pendant 2 minutes");
@@ -73,8 +75,10 @@ switch ($action) {
                 include  PATH_VIEWS . 'v_code2facteurs.php';
             }
         }
+        //réinitialiser toutes les heures pour enlever les essais (car si l'utilisateur à 2 echecs et qu'il réessaye 2j après il sera bloqué lors de la première tentative)
         //DATE_ADD(date, INTERVAL expr type) //DATEDIFF(date1,date2)
         //DATEDIFF(Now(),DATE_ADD(Now(), INTERVAL 60 seconds)
+        //str_totime
         // Tache chrone en base de donnée
         //Mettre un timer sur la page et dès que le timeur arrive a 0 faire une modifier la base et mettre a 0
         // sleep() 

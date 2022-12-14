@@ -6,6 +6,7 @@
     <div class="row">
         <h2>Renseigner ma fiche de frais du mois {{ mois }}-{{ annee }}</h2>
         <h3>Eléments forfaitisés</h3>
+        {% include "AppView/erreurs.html.twig" %}
         {% include "FraisView/listefraisforfait.html.twig" %}
         {% include "FraisView/listefraishorsforfait.html.twig" %}
     </div>

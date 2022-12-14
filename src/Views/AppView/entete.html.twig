@@ -67,7 +67,7 @@
                                      Renseigner la fiche de frais
                                  </a>
                              </li>
-                             <li {% if uri=='/etatfrais'%} class="active"{% endif%}>
+                             <li {% if (uri=='/etatfrais' or uri=='/voiretatfrais')%} class="active"{% endif%}>
                                  <a href="/etatfrais">
                                      <span class="glyphicon glyphicon-list-alt"></span>
                                      Afficher mes fiches de frais

@@ -198,23 +198,23 @@ abstract class Utilitaires {
      */
     public static function valideInfosFrais($dateFrais, $libelle, $montant): void {
         if ($dateFrais == '') {
-            self::ajouterErreur('Le champ date ne doit pas être vide');
+            self::ajouterErreurSession('Le champ date ne doit pas être vide');
         } else {
             if (!self::estDatevalide($dateFrais)) {
-                self::ajouterErreur('Date invalide');
+                self::ajouterErreurSession('Date invalide');
             } else {
                 if (self::estDateDepassee($dateFrais)) {
-                    self::ajouterErreur("date d'enregistrement du frais dépassé, plus de 1 an");
+                    self::ajouterErreurSession("date d'enregistrement du frais dépassé, plus de 1 an");
                 }
             }
         }
         if ($libelle == '') {
-            self::ajouterErreur('Le champ description ne peut pas être vide');
+            self::ajouterErreurSession('Le champ description ne peut pas être vide');
         }
         if ($montant == '') {
-            self::ajouterErreur('Le champ montant ne peut pas être vide');
+            self::ajouterErreurSession('Le champ montant ne peut pas être vide');
         } elseif (!is_numeric($montant)) {
-            self::ajouterErreur('Le champ montant doit être numérique');
+            self::ajouterErreurSession('Le champ montant doit être numérique');
         }
     }
     

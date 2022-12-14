@@ -14,7 +14,9 @@ class GestionFraisController{
             header('Location: /');
         }
         $idutilisateur = $_SESSION['idutilisateur'];
-        $erreurs = $_SESSION['erreurs'];
+        if(isset($_SESSION['erreurs'])){
+            $erreurs = $_SESSION['erreurs'];
+        }
         $mois = Utilitaires::getMois(date('d/m/Y'));
         $numAnnee = substr($mois, 0, 4);
         $numMois = substr($mois, 4, 2);
@@ -41,8 +43,6 @@ class GestionFraisController{
                 'connecte'=>Utilitaires::estConnecte()));
         }
     }
-
-
     #[Route('/gererfrais/validermajfraisforfait', methods: ['POST'], name: 'app_valider_maj_frais_forfait')]
     public function validerMajFraisForfait() : void
     {
@@ -56,6 +56,7 @@ class GestionFraisController{
         }
         header('Location: /gererfrais');
     }
+    
     #[Route('/gererfrais/validercreationfrais', methods: ['POST'],name: 'app_valider_creation_frais')]
     public function validerCreationFrais() : void
     {
@@ -73,6 +74,5 @@ class GestionFraisController{
             PdoGsb::getPdoGsb()->creeNouveauFraisHorsForfait($idutilisateur, $mois, $libelle, $dateFrais, $montant);
         }
     }
-
 
 }

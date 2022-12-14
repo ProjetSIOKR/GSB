@@ -1,0 +1,42 @@
+{% extends "layout.html.twig" %}
+{% block entete %}
+    {% include "AppView/entete.html.twig" %}
+{% endblock %}
+{% block contenu %}
+    <div class="form-group form-inline w-50">
+                <label for="visiteur"> Choisir le Visiteur : </label>
+                <select id="lesVisiteurs" name="lesVisiteurs" class="form-control">
+                    {% for unVisiteur in lesVisiteurs %}
+                        {% if unVisiteur ==  null%}
+                            <option selected value="{{ unVisiteur.id }}">
+                                {{unVisiteur.nom}} {{unVisiteur.prenom}}
+                            </option>   
+                        {% else %}
+                            <option selected value="{{ unVisiteur.id }}">
+                                {{unVisiteur.nom}} {{unVisiteur.prenom}}
+                            </option> 
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <label for="lstMois" accesskey="n">Mois : </label>
+                <select id="lstMois" name="lstMois" class="form-control">
+                    {% for mois in lesMois %}
+                        {% if mois ==  moisASelectionner%}
+                            <option selected value="{{ mois.mois }}">
+                                {{mois.numMois}}/{{mois.numAnnee}}
+                            </option>   
+                        {% else %}
+                            <option selected value="{{ mois.mois }}">
+                                {{mois.numMois}}/{{mois.numAnnee}}
+                            </option> 
+                        {% endif %}
+                    {% endfor %}
+                </select>
+   </div>
+    <div class="row">
+        <h2 class="orange"> Valider la fiche de frais</h2>
+        <h3>Eléments forfaitisés</h3>
+        {% include "AppView/erreurs.html.twig" %}
+        {% include "FraisView/validerlistefraisforfait.html.twig" %}
+    </div>
+{% endblock %}

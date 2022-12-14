@@ -13,7 +13,7 @@ class GestionFraisController{
         if(!(Utilitaires::estConnecte())){
             header('Location: /');
         }
-        $idutilisateur = $_SESSION['idutilisateur'];
+        $idutilisateur = Utilitaires::getId();
         if(isset($_SESSION['erreurs'])){
             $erreurs = $_SESSION['erreurs'];
         }
@@ -47,7 +47,7 @@ class GestionFraisController{
     public function validerMajFraisForfait() : void
     {
         $lesFrais = filter_input(INPUT_POST, 'LesFrais', FILTER_DEFAULT, FILTER_FORCE_ARRAY);
-        $idutilisateur = $_SESSION['idutilisateur'];
+        $idutilisateur = Utilitaires::getId();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         if (Utilitaires::lesQteFraisValides($lesFrais)) {
             PdoGsb::getPdoGsb()->majFraisForfait($idutilisateur, $mois, $lesFrais);
@@ -60,7 +60,7 @@ class GestionFraisController{
     #[Route('/gererfrais/validercreationfrais', methods: ['POST'],name: 'app_valider_creation_frais')]
     public function validerCreationFrais() : void
     {
-        $idutilisateur = $_SESSION['idutilisateur'];
+        $idutilisateur = Utilitaires::getId();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         $dateFrais = Utilitaires::dateAnglaisVersFrancais(
             filter_input(INPUT_POST, 'dateFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS)

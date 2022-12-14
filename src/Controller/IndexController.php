@@ -14,7 +14,7 @@ class IndexController
         if(Utilitaires::estConnecte()){
             header('Location: /accueil');
         }
-       MyTwig::afficheVue('ConnexionView/connexion.html.twig');
+        MyTwig::afficheVue('ConnexionView/connexion.html.twig');
     }
 
     #[Route('/connexion', methods: ['POST'], name: 'app_connexion')]

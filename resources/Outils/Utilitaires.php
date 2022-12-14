@@ -217,9 +217,9 @@ abstract class Utilitaires {
             self::ajouterErreur('Le champ montant doit être numérique');
         }
     }
-
+    
     /**
-     * Ajoute le libellé d'une erreur au tableau des erreurs
+     * Ajoute le libellé d'une erreur au tableau des erreurs dans la variable de session
      *
      * @param String $msg Libellé de l'erreur
      *
@@ -233,15 +233,35 @@ abstract class Utilitaires {
     }
 
     /**
+     * Ajoute le libellé d'une erreur au tableau des erreurs dans la variable de session
+     *
+     * @param String $msg Libellé de l'erreur
+     *
+     * @return null
+     */
+    public static function ajouterErreurSession($msg): void {
+        if (!isset($_SESSION['erreurs'])) {
+            $_SESSION['erreurs'] = array();
+        }
+        $_SESSION['erreurs'][] = $msg;
+    }
+
+    /**
      * Retoune le nombre de lignes du tableau des erreurs
      *
      * @return Integer le nombre d'erreurs
      */
     public static function nbErreurs(): int {
-        if (!isset($_REQUEST['erreurs'])) {
+        if (!isset($_SESSION['erreurs'])) {
             return 0;
         } else {
-            return count($_REQUEST['erreurs']);
+            return count($_SESSION['erreurs']);
+        }
+    }
+    public static function supprimerErreurs(): void
+    {
+        if (isset($_SESSION['erreurs'])) {
+            $_SESSION['erreurs'] = [];
         }
     }
 

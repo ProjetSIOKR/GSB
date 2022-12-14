@@ -14,6 +14,7 @@ class GestionFraisController{
             header('Location: /');
         }
         $idutilisateur = $_SESSION['idutilisateur'];
+        $erreurs = $_SESSION['erreurs'];
         $mois = Utilitaires::getMois(date('d/m/Y'));
         $numAnnee = substr($mois, 0, 4);
         $numMois = substr($mois, 4, 2);
@@ -22,13 +23,26 @@ class GestionFraisController{
         }
         $lesFraisHorsForfait = PdoGsb::getPdoGsb()->getLesFraisHorsForfait($idutilisateur, $mois);
         $lesFraisForfait = PdoGsb::getPdoGsb()->getLesFraisForfait($idutilisateur, $mois);
-        MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
-            'role'=>$_SESSION['role'],
-            'uri'=>$_SERVER['REQUEST_URI'],
-            'lesFrais'=>$lesFraisForfait,
-            'LesFraisHorsForfait'=>$lesFraisHorsForfait,
-            'connecte'=>Utilitaires::estConnecte()));
+        if(isset($erreurs)){
+            MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
+                'erreurs'=>$erreurs,
+                'role'=>$_SESSION['role'],
+                'uri'=>$_SERVER['REQUEST_URI'],
+                'lesFrais'=>$lesFraisForfait,
+                'LesFraisHorsForfait'=>$lesFraisHorsForfait,
+                'connecte'=>Utilitaires::estConnecte()));
+            Utilitaires::supprimerErreurs();
+        }else{
+            MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
+                'role'=>$_SESSION['role'],
+                'uri'=>$_SERVER['REQUEST_URI'],
+                'lesFrais'=>$lesFraisForfait,
+                'LesFraisHorsForfait'=>$lesFraisHorsForfait,
+                'connecte'=>Utilitaires::estConnecte()));
+        }
     }
+
+
     #[Route('/gererfrais/validermajfraisforfait', methods: ['POST'], name: 'app_valider_maj_frais_forfait')]
     public function validerMajFraisForfait() : void
     {
@@ -38,7 +52,7 @@ class GestionFraisController{
         if (Utilitaires::lesQteFraisValides($lesFrais)) {
             PdoGsb::getPdoGsb()->majFraisForfait($idutilisateur, $mois, $lesFrais);
         } else {
-            Utilitaires::ajouterErreur('Les valeurs des frais doivent être numériques');
+            Utilitaires::ajouterErreurSession('Les valeurs des frais doivent être numériques');
         }
         header('Location: /gererfrais');
     }

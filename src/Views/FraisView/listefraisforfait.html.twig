@@ -1,4 +1,4 @@
-<div class="alert alert-danger" role="alert" id="errorsFrais"></div>
+{% include "AppView/erreurs.html.twig" %}
 <div class="row">
     <div class="col-md-4">
         <form method="post"
@@ -22,27 +22,3 @@
         </form>
     </div>
 </div>
-<script>
-    const errors = document.querySelector('#errorsFrais');
-    const bouttonFrais = document.querySelector('#validerFrais');
-    const formFrais = document.querySelector('#formFrais');
-    const lesFrais = document.querySelector('#lesFrais');
-    errors.style.display="none";
-    lesFrais.addEventListener('change', () => {
-        let messages = [];
-        if (lesFrais.value === null || isNaN(lesFrais.value)) {
-            bouttonFrais.style.visibility = "hidden";
-            messages.push('Les valeurs des frais doivent être numériques');
-            errors.style.display = "block";
-        } else {
-            bouttonFrais.style.visibility = "visible";
-            errors.style.display = "none";
-        }
-    });
-    if(messages.length > 0){
-        formFrais.addEventListener("submit", (e) => {
-            e.preventDefault();
-        });
-        errors.innerText = messages.join(', ');
-    }
-</script>

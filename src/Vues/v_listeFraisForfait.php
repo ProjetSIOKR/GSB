@@ -16,8 +16,21 @@
  */
 
 ?>
-<div class="row">    
-    <h2>Renseigner ma fiche de frais du mois 
+<div class="row">
+<?php if($etat['idetat'] == 'CR'){
+     ?>
+    <br>
+<div id="ficheCloturee" class="alert alert-info" role="alert"  >
+                    Fiche de frais du mois <?=$numMois . '-' . $numAnnee . " cloturée !" ;?>
+                    </div>
+</div>
+<?php
+
+}
+else
+{
+    ?> 
+   <h2>Renseigner ma fiche de frais du mois 
         <?php echo $numMois . '-' . $numAnnee ?>
     </h2>
     <h3>Eléments forfaitisés</h3>
@@ -47,4 +60,8 @@
             </fieldset>
         </form>
     </div>
-</div>
+<?php 
+
+                } 
+
+                ?>

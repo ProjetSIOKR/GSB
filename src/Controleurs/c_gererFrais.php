@@ -65,5 +65,6 @@ switch ($action) {
 }
 $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idutilisateur, $mois);
 $lesFraisForfait = $pdo->getLesFraisForfait($idutilisateur, $mois);
+$etat=$pdo->getFicheFraisEtat($idutilisateur.$mois);
 require PATH_VIEWS . 'v_listeFraisForfait.php';
 require PATH_VIEWS . 'v_listeFraisHorsForfait.php';

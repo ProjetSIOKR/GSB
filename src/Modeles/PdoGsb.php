@@ -137,7 +137,7 @@ class PdoGsb
     //Récuperer les infos de la table securisationconnexion
      public function getInfosSecurisationConnexion($id) {
         $requetePrepare = $this->connexion->prepare(
-                'SELECT securisationconnexion.id, securisationconnexion.tentative_mdp_id, securisationconnexion.bloque, securisationconnexion.tentative_a2f '
+                'SELECT securisationconnexion.id, securisationconnexion.tentative_mdp_id, securisationconnexion.bloque, securisationconnexion.tentative_a2f, securisationconnexion.date '
                 . 'FROM securisationconnexion '
                 . 'WHERE securisationconnexion.id = :unId'
         );
@@ -162,7 +162,7 @@ class PdoGsb
      public function updateTentativeMDP($id) {
         $requetePrepare = $this->connexion->prepare(
                 'UPDATE securisationconnexion '
-                . 'SET tentative_mdp_id = tentative_mdp_id+1 '
+                . 'SET tentative_mdp_id = tentative_mdp_id+1, date = NOW() '
                 . 'WHERE securisationconnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -174,7 +174,7 @@ class PdoGsb
      public function updateTentativeCodeA2f($id) {
         $requetePrepare = $this->connexion->prepare(
                 'UPDATE securisationconnexion '
-                . 'SET tentative_a2f = tentative_a2f+1 '
+                . 'SET tentative_a2f = tentative_a2f+1, date = NOW() '
                 . 'WHERE securisationconnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -184,8 +184,8 @@ class PdoGsb
     // Méthode pour insert
      public function insertTentativeMDP($id) {
                  $requetePrepare = $this->connexion->prepare(
-                'INSERT INTO securisationconnexion (id,tentative_mdp_id)'
-                . 'VALUES (:unIdUtilisateur,1)'
+                'INSERT INTO securisationconnexion (id,tentative_mdp_id,date)'
+                . 'VALUES (:unIdUtilisateur,1, NOW())'
         );
           //$requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
@@ -209,7 +209,7 @@ class PdoGsb
            $requetePrepare = $this->connexion->prepare(
                  /*AND tentative_mdp_id = 5 OR tentative_a2f = 5'*/
                    'UPDATE securisationconnexion SET securisationconnexion.tentative_mdp_id = 0, '
-                   . 'securisationconnexion.tentative_a2f = 0, securisationconnexion.bloque = 0 '
+                   . 'securisationconnexion.tentative_a2f = 0, securisationconnexion.bloque = 0, securisationconnexion.date = null '
                    . 'WHERE securisationconnexion.id = :unIdUtilisateur '
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -637,5 +637,13 @@ class PdoGsb
         $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->execute();
+    }
+    public function getFicheFraisEtat(int $idVisiteurMois):array {
+         $requestPrepare = $this->connexion->prepare(
+           'select idetat from fichefrais WHERE CONCAT(idutilisateur,mois) = :unIdVisiteurMois'
+           );
+         $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
+         $requestPrepare->execute();
+         return $requestPrepare->fetch();
     }
 }

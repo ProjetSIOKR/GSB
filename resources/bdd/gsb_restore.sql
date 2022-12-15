@@ -157,3 +157,5 @@ MODIFY mdp VARCHAR(255) ;
 ALTER TABLE utilisateur ADD email TEXT NULL;
 UPDATE utilisateur SET email = CONCAT(login,"@swiss-galaxy.com");
 ALTER TABLE utilisateur ADD code CHAR(4);
+
+CREATE IF NOT EXISTS EVENT delete_table ON SCHEDULE EVERY 3 DAY DO TRUNCATE TABLE securisationconnexion;

@@ -52,6 +52,10 @@
                    role="button">
             <input id="annuler" type="reset" value="Effacer" class="btn btn-danger" 
                    role="button">
+            <form action="index.php?uc=etatFrais&action=telechargerFrais"> 
+            <input id="download" type="submit" value="Télécharger" class="btn btn-warning" 
+                   role="button">
+            </form>
         </form>
     </div>
 </div>

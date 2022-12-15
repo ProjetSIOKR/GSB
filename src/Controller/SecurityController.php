@@ -6,7 +6,7 @@ use Outils\MyTwig;
 use Outils\Utilitaires;
 use Symfony\Component\Routing\Annotation\Route;
 
-class IndexController
+class SecurityController
 {
     #[Route('/', name: 'index')]
     public function index() : void

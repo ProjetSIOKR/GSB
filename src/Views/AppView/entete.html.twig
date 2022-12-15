@@ -39,7 +39,7 @@
                                     Valider fiche de frais
                                 </a>
                             </li>
-                            <li class="comptableColor">
+                            <li {% if uri=='/suivipaiement'%} class="comptableActive"{% endif%}class="comptableColor">
                                 <a href="/suivipaiement">
                                     <span class="glyphicon glyphicon-eur"></span>
                                     Suivre le paiement

@@ -36,6 +36,24 @@ abstract class Utilitaires {
     }
 
     /**
+     * Méthode retournant l'id de l'utilisateur connecté
+     * @return int
+     */
+    public static function getId(): int
+    {
+        return $_SESSION['idutilisateur'];
+    }
+
+    /**
+     * Méthoide retournant le role de l'utilisateur connecté
+     * @return int
+     */
+    public static function getRole(): int
+    {
+        return $_SESSION['role'];
+    }
+
+    /**
      * Enregistre dans une variable session les infos d'un visiteur
      *
      * @param String $idUtilisateur ID du visiteur

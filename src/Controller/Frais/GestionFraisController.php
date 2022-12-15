@@ -10,6 +10,7 @@ class GestionFraisController{
     #[Route('/gererfrais', name: 'app_saisir_frais')]
     public function sasirFrais() : void
     {
+        $role=Utilitaires::getRole();
         if(!(Utilitaires::estConnecte())){
             header('Location: /');
         }
@@ -17,18 +18,19 @@ class GestionFraisController{
         if(isset($_SESSION['erreurs'])){
             $erreurs = $_SESSION['erreurs'];
         }
+        $pdo= PdoGsb::getPdoGsb();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         $numAnnee = substr($mois, 0, 4);
         $numMois = substr($mois, 4, 2);
-        if (PdoGsb::getPdoGsb()->estPremierFraisMois($idutilisateur, $mois)) {
-            PdoGsb::getPdoGsb()->creeNouvellesLignesFrais($idutilisateur, $mois);
+        if ($pdo->estPremierFraisMois($idutilisateur, $mois)) {
+            $pdo->creeNouvellesLignesFrais($idutilisateur, $mois);
         }
-        $lesFraisHorsForfait = PdoGsb::getPdoGsb()->getLesFraisHorsForfait($idutilisateur, $mois);
-        $lesFraisForfait = PdoGsb::getPdoGsb()->getLesFraisForfait($idutilisateur, $mois);
+        $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idutilisateur, $mois);
+        $lesFraisForfait = $pdo->getLesFraisForfait($idutilisateur, $mois);
         if(isset($erreurs)){
             MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
                 'erreurs'=>$erreurs,
-                'role'=>$_SESSION['role'],
+                'role'=>$role,
                 'uri'=>$_SERVER['REQUEST_URI'],
                 'lesFrais'=>$lesFraisForfait,
                 'LesFraisHorsForfait'=>$lesFraisHorsForfait,
@@ -36,7 +38,7 @@ class GestionFraisController{
             Utilitaires::supprimerErreurs();
         }else{
             MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
-                'role'=>$_SESSION['role'],
+                'role'=>$role,
                 'uri'=>$_SERVER['REQUEST_URI'],
                 'lesFrais'=>$lesFraisForfait,
                 'LesFraisHorsForfait'=>$lesFraisHorsForfait,
@@ -46,11 +48,12 @@ class GestionFraisController{
     #[Route('/gererfrais/validermajfraisforfait', methods: ['POST'], name: 'app_valider_maj_frais_forfait')]
     public function validerMajFraisForfait() : void
     {
+        $pdo=PdoGsb::getPdoGsb();
         $lesFrais = filter_input(INPUT_POST, 'LesFrais', FILTER_DEFAULT, FILTER_FORCE_ARRAY);
         $idutilisateur = Utilitaires::getId();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         if (Utilitaires::lesQteFraisValides($lesFrais)) {
-            PdoGsb::getPdoGsb()->majFraisForfait($idutilisateur, $mois, $lesFrais);
+            $pdo->majFraisForfait($idutilisateur, $mois, $lesFrais);
         } else {
             Utilitaires::ajouterErreurSession('Les valeurs des frais doivent être numériques');
         }
@@ -60,6 +63,7 @@ class GestionFraisController{
     #[Route('/gererfrais/validercreationfrais', methods: ['POST'],name: 'app_valider_creation_frais')]
     public function validerCreationFrais() : void
     {
+        $pdo=PdoGsb::getPdoGsb();
         $idutilisateur = Utilitaires::getId();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         $dateFrais = Utilitaires::dateAnglaisVersFrancais(
@@ -71,7 +75,7 @@ class GestionFraisController{
         if (Utilitaires::nbErreurs() != 0) {
             header('Location: /gererfrais');
         } else {
-            PdoGsb::getPdoGsb()->creeNouveauFraisHorsForfait($idutilisateur, $mois, $libelle, $dateFrais, $montant);
+            $pdo->creeNouveauFraisHorsForfait($idutilisateur, $mois, $libelle, $dateFrais, $montant);
         }
     }
 

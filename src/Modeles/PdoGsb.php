@@ -612,4 +612,44 @@ class PdoGsb
         $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->execute();
     }
+
+    public function getFichesValidees() {
+        $requestPrepare = $this->connexion->prepare(
+            'SELECT fichefrais.idutilisateur, fichefrais.mois, fichefrais.montantvalide, '
+            . 'fichefrais.datemodif, fichefrais.idetat, utilisateur.nom, utilisateur.prenom '
+            . 'FROM fichefrais INNER JOIN utilisateur on fichefrais.idutilisateur = utilisateur.id '
+            . 'WHERE fichefrais.idetat = "VA"'
+        );
+        $requestPrepare->execute();
+        return $requestPrepare->fetchAll();
+    }
+
+    public function getTotauxFicheFraisHorsForfait(int $idVisiteur, int $mois) {
+        $requestPrepare = $this->connexion->prepare(
+            'select coalesce(sum(montant),0) as cumul from lignefraishorsforfait '
+            . "where lignefraishorsforfait.idvisiteur = :unId "
+            . "and lignefraishorsforfait.mois = :unMois ");
+        $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        $ligne1 = $requestPrepare->fetch();
+        $cumulMontantHF = $ligne1['cumul'];
+        return $cumulMontantHF;
+    }
+
+    public function getTotauxFicheFraisForfait(int $idVisiteur, int $mois) {
+        $requestPrepare2 = $this->connexion->prepare(
+            'select coalesce(sum(lignefraisforfait.quantite * fraisforfait.montant), 0) '
+            . 'as cumul '
+            . 'from lignefraisforfait, fraisforfait '
+            . 'where lignefraisforfait.idfraisforfait = fraisforfait.id '
+            . "and lignefraisforfait.idvisiteur = :unId "
+            . "and lignefraisforfait.mois = :unMois ");
+        $requestPrepare2->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare2->bindParam(':unMois', $mois, PDO::PARAM_INT);
+        $requestPrepare2->execute();
+        $ligne2 = $requestPrepare2->fetch();
+        $cumulMontantForfait = $ligne2['cumul'];
+        return $cumulMontantForfait;
+    }
 }

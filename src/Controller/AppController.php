@@ -12,10 +12,14 @@ class AppController
     #[Route('/accueil', name: 'accueil')]
     public function index() : void
     {
-        MyTwig::afficheVue('AppView/accueil.html.twig', array('prenom' => $_SESSION['prenom'],
-            'nom' => $_SESSION['nom'],
-            'role'=>$_SESSION['role'],
-            'uri'=>$_SERVER['REQUEST_URI'],
+        $role = Utilitaires::getRole();
+        $nom = Utilitaires::getNom();
+        $prenom = Utilitaires::getPrenom();
+        $uri = Utilitaires::getUri();
+        MyTwig::afficheVue('AppView/accueil.html.twig', array('prenom' => $prenom,
+            'nom' => $nom,
+            'role'=>$role,
+            'uri'=>$uri,
             'connecte'=>Utilitaires::estConnecte()));
     }
 }

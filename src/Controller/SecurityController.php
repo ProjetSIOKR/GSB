@@ -73,10 +73,10 @@ class SecurityController
     public function verification(): void
     {
         $code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $id = $_SESSION['idutilisateur'];
+        $id = Utilitaires::getId();
         $securisationUtilisateur = PdoGsb::getPdoGsb()->getInfosSecurisationConnexion($id);
         $securisationUtilisateurBloque = PdoGsb::getPdoGsb()->getInfosSecurisationConnexionBloque($id);
-        if (PdoGsb::getPdoGsb()->getCodeUtilisateur($_SESSION['idutilisateur']) !== $code) {
+        if (PdoGsb::getPdoGsb()->getCodeUtilisateur($id) !== $code) {
             if($securisationUtilisateurBloque['bloque'] == 1){
                 PdoGsb::getPdoGsb()->updateTentativeMDP_A2F($id);
                 Utilitaires::ajouterErreur("Votre compte est débloqué, vous pouvez réessayer !");

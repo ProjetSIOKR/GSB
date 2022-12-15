@@ -13,13 +13,15 @@ class EtatFraisController{
         if(!(Utilitaires::estConnecte())){
             header('Location: /');
         }
-        $idVisiteur = $_SESSION['idutilisateur'];
+        $idVisiteur = Utilitaires::getId();
+        $role = Utilitaires::getRole();
+        $uri = Utilitaires::getUri();
         $lesMois = PdoGsb::getPdoGsb()->getLesMoisDisponibles($idVisiteur);
         $lesCles = array_keys($lesMois);
         $moisASelectionner = $lesCles[0];
         MyTwig::afficheVue('EtatFraisView/etatfrais.html.twig',array(
-            'role'=>$_SESSION['role'],
-            'uri'=>$_SERVER['REQUEST_URI'],
+            'role'=>$role,
+            'uri'=>$uri,
             'connecte'=>Utilitaires::estConnecte(),
             'lesMois'=>$lesMois,
             'moisASelectionner'=>$moisASelectionner,
@@ -31,6 +33,8 @@ class EtatFraisController{
         $idVisiteur = $_SESSION['idutilisateur'];
         $leMois = filter_input(INPUT_POST, 'lstMois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lesMois = PdoGsb::getPdoGsb()->getLesMoisDisponibles($idVisiteur);
+        $role = Utilitaires::getRole();
+        $uri = Utilitaires::getUri();
         $moisASelectionner = $leMois;
         $lesFraisHorsForfait = PdoGsb::getPdoGsb()->getLesFraisHorsForfait($idVisiteur, $leMois);
         $lesFraisForfait = PdoGsb::getPdoGsb()->getLesFraisForfait($idVisiteur, $leMois);
@@ -42,8 +46,8 @@ class EtatFraisController{
         $nbJustificatifs = $lesInfosFicheFrais['nbJustificatifs'];
         $dateModif = Utilitaires::dateAnglaisVersFrancais($lesInfosFicheFrais['dateModif']);
         MyTwig::afficheVue('EtatFraisView/voiretatfrais.html.twig',array(
-            'role'=>$_SESSION['role'],
-            'uri'=>$_SERVER['REQUEST_URI'],
+            'role'=>$role,
+            'uri'=>$uri,
             'connecte'=>Utilitaires::estConnecte(),
             'lesMois'=>$lesMois,
             'moisASelectionner'=>$moisASelectionner,

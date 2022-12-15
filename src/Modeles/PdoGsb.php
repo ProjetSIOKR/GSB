@@ -613,6 +613,10 @@ class PdoGsb
         $requetePrepare->execute();
     }
 
+    /**
+     * Méthode permettant de récupérer toutes les fiches de frais validées
+     * @return array|false
+     */
     public function getFichesValidees() {
         $requestPrepare = $this->connexion->prepare(
             'SELECT fichefrais.idutilisateur, fichefrais.mois, fichefrais.montantvalide, '
@@ -627,7 +631,7 @@ class PdoGsb
     public function getTotauxFicheFraisHorsForfait(int $idVisiteur, int $mois) {
         $requestPrepare = $this->connexion->prepare(
             'select coalesce(sum(montant),0) as cumul from lignefraishorsforfait '
-            . "where lignefraishorsforfait.idvisiteur = :unId "
+            . "where lignefraishorsforfait.idutilisateur = :unId "
             . "and lignefraishorsforfait.mois = :unMois ");
         $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
         $requestPrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
@@ -643,7 +647,7 @@ class PdoGsb
             . 'as cumul '
             . 'from lignefraisforfait, fraisforfait '
             . 'where lignefraisforfait.idfraisforfait = fraisforfait.id '
-            . "and lignefraisforfait.idvisiteur = :unId "
+            . "and lignefraisforfait.idutilisateur = :unId "
             . "and lignefraisforfait.mois = :unMois ");
         $requestPrepare2->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
         $requestPrepare2->bindParam(':unMois', $mois, PDO::PARAM_INT);
@@ -652,4 +656,29 @@ class PdoGsb
         $cumulMontantForfait = $ligne2['cumul'];
         return $cumulMontantForfait;
     }
+
+    /**
+     * Permet de mettre la fiche de frais de l'utilisateur + mois de la fiche frais en mise en paiement
+     * @param int $idVisiteurMois
+     * @return void
+     */
+    public function setFicheFraisMiseEnPaiement(int $idVisiteurMois): void {
+        $date=(date("Y-m-d"));
+        $requestPrepare = $this->connexion->prepare(
+            "UPDATE fichefrais set idetat = 'MP', datemodif = :uneDate WHERE CONCAT(idvisiteur,mois) = :unIdVisiteurMois"
+        );
+        $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
+        $requestPrepare->bindParam(':uneDate', $date);
+        $requestPrepare->execute();
+    }
+    public function getFicheFraisEtat(int $idVisiteurMois):array {
+        $requestPrepare = $this->connexion->prepare(
+            'select idetat from fichefrais WHERE CONCAT(idvisiteur,mois) = :unIdVisiteurMois'
+        );
+        $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        return $requestPrepare->fetch();
+    }
+
+
 }

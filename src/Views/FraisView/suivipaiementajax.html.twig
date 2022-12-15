@@ -19,15 +19,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                            {% for uneFiche in fichesValidees %}
-                                <tr>
-                                    <td><input class="btnselect" type="checkbox" name="{{uneFiche.idutilisateur}}{{uneFiche.mois}}" data_mois="{{ uneFiche.mois }}" data_id="{{ uneFiche.idutilisateur }}" data-toggle="modal" data-target="#modal"></td>
-                                    <td>{{ uneFiche.prenom }} {{ uneFiche.nom }}</td>
-                                    <td>{{ uneFiche.mois }}</td>
-                                    <td>{{ uneFiche.montantvalide }}</td>
-                                    <td>{{ uneFiche.datemodif }}</td>
-                                </tr>
-                             {% endfor %}x
+                        {% for uneFiche in fichesValidees %}
+                            <tr>
+                                <td><input class="btnselect" type="checkbox" name="{{uneFiche.idutilisateur}}{{uneFiche.mois}}" data_mois="{{ uneFiche.mois }}" data_id="{{ uneFiche.idutilisateur }}" data-toggle="modal" data-target="#modal"></td>
+                                <td>{{ uneFiche.prenom }} {{ uneFiche.nom }}</td>
+                                <td>{{ uneFiche.mois }}</td>
+                                <td>{{ uneFiche.montantvalide }}</td>
+                                <td>{{ uneFiche.datemodif }}</td>
+                            </tr>
+                        {% endfor %}x
                         </tbody>
                     </table>
                     <table class="table table-bordered shadow">
@@ -40,8 +40,11 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr id="details">
-                            </tr>
+                        <tr id="{{ utilisateur.id }}">
+                            <td>{{ utilisateur.prenom }} {{ utilisateur.nom }}</td>
+                            <td>{{ totalFraisForfait }}</td>
+                            <td>{{ totalFraisForfait + totalFraisHorsForfait}}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -58,8 +61,8 @@
             $('#datatable').DataTable({paging: false});
         });
         $('#btnannuler').click(function(){
-                document.getElementById('details').innerHTML = "";
-            });
+            document.getElementById('details').innerHTML = "";
+        });
         $('.btnselect').click(function(){
             id = $(this).attr('data_id');
             mois = $(this).attr('data_mois');

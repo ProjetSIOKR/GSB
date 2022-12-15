@@ -11,6 +11,7 @@ class SuiviFraisController
     #[Route('/suivipaiement', name: 'app_suivi_paiement')]
     public function suivrePaiement() : void
     {
+        $uri= Utilitaires::getUri();
         $pdo=PdoGsb::getPdoGsb();
         $role= Utilitaires::getRole();
         $fichesValides = $pdo->getFichesValidees();
@@ -18,7 +19,28 @@ class SuiviFraisController
             "fichesValidees"=>$fichesValides,
             'connecte'=>Utilitaires::estConnecte(),
             'role'=>$role,
-            'uri'=>$_SERVER['REQUEST_URI'],
+            'uri'=>$uri,
+        ));
+    }
+
+    #[Route('/suivipaiement/ajax', methods: ['POST'], name: 'app_suivi_paiement_ajax')]
+    public function suivrePaiementAjax(): void
+    {
+        $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $mois = filter_input(INPUT_POST, 'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $uri= Utilitaires::getUri();
+        $pdo=PdoGsb::getPdoGsb();
+        $role= Utilitaires::getRole();
+        $totalFraisForfait = $pdo->getTotauxFicheFraisForfait($id, $mois);
+        $totalFraisHorsForfait = $pdo->getTotauxFicheFraisHorsForfait($id, $mois);
+        $utilisateur = $pdo->getUtilisateurFicheFrais($id);
+        MyTwig::afficheVue('FraisView/suivipaiementajax.html.twig',array(
+            'role'=>$role,
+            'uri'=>$uri,
+            'connecte'=>Utilitaires::estConnecte(),
+            'totalFraisForfait'=>$totalFraisForfait,
+            'totalFraisHorsForfait'=>$totalFraisHorsForfait,
+            'utilisateur'=>$utilisateur
         ));
     }
 }

@@ -30,11 +30,6 @@ abstract class Utilitaires {
         return isset($_SESSION['idutilisateur']) && isset($_SESSION['code']);
     }
 
-    public static function connecterA2f($code): void
-    {
-        $_SESSION['code'] = $code;
-    }
-
     /**
      * Méthode retournant l'id de l'utilisateur connecté
      * @return int
@@ -45,12 +40,39 @@ abstract class Utilitaires {
     }
 
     /**
+     * Méthode retournant l'uri de la page courante
+     * @return string
+     */
+    public static function getUri(): string
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
+
+    /**
      * Méthoide retournant le role de l'utilisateur connecté
      * @return int
      */
     public static function getRole(): int
     {
         return $_SESSION['role'];
+    }
+
+    /**
+     * Méthode retournant le nom de l'utilisateur connecté
+     * @return string
+     */
+    public static function getNom(): string
+    {
+        return $_SESSION['nom'];
+    }
+
+    /**
+     * Méthode retournant le prénom de l'utilisateur connecté
+     * @return string
+     */
+    public static function getPrenom(): string
+    {
+        return $_SESSION['nom'];
     }
 
     /**
@@ -276,6 +298,11 @@ abstract class Utilitaires {
             return count($_SESSION['erreurs']);
         }
     }
+
+    /**
+     * Méthode permettant de supprimer les erreurs dans la variable de Session
+     *
+     */
     public static function supprimerErreurs(): void
     {
         if (isset($_SESSION['erreurs'])) {
@@ -283,6 +310,11 @@ abstract class Utilitaires {
         }
     }
 
+    /**
+     * Méthode permettant de faire une redirection sois en php si possible sois en JavaScript
+     * @param $url
+     * @return void
+     */
     public static function redirectTo($url): void
     {
         if(!headers_sent()){

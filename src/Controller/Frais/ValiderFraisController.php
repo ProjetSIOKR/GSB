@@ -12,16 +12,17 @@ class ValiderFraisController{
     public function validerFicheFrais() : void {
         $role= Utilitaires::getRole();
         $uri = Utilitaires::getUri();
+        $dateJour = date('d/m/Y');
+        $dateFormatter= Utilitaires::getTableauDate($dateJour);
+        $dates =Utilitaires::getTableauDateAffichage($dateFormatter);
         $lesVisiteurs = PdoGsb::getPdoGsb()->getInfosAllVisiteur();
-        $lesMois = PdoGsb::getPdoGsb()->getLesMoisDisponibles($idVisiteur);
-        $lesCles = array_keys($lesMois);
-        $moisASelectionner = $lesCles[0];
         if($role != 1 || !(Utilitaires::estConnecte())){
             header('Location : /');
         }
         MyTwig::afficheVue('FraisView/validerfichefrais.html.twig', array(
                 'role'=>$role,
                 'uri'=>$uri,
+                'lesMois'=>$dates,
                 'lesVisiteurs'=>$lesVisiteurs,
                 'connecte'=>Utilitaires::estConnecte()));
     }

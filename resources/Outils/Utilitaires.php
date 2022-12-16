@@ -31,6 +31,15 @@ abstract class Utilitaires {
     }
 
     /**
+     * Ajoute en variable de session le code de l'authentification A2F de l'utilisateur connecté
+     * @param $code
+     * @return void
+     */
+    public static function connecterA2f($code) {
+        $_SESSION['code'] = $code;
+    }
+
+    /**
      * Méthode retournant l'id de l'utilisateur connecté
      * @return int
      */
@@ -141,6 +150,41 @@ abstract class Utilitaires {
             $mois = '0' . $mois;
         }
         return $annee . $mois;
+    }
+
+    /**
+     *Retourne les mois sur 1 an a partir de la date du jour au format aaaamm
+     * @param $date
+     *
+     * @return array
+     */
+    public static function getTableauDate($date) : array {
+        $tabDateFormat = [];
+        for ($i=0; $i<= 12 ; $i++){
+           $nouvelleDate = date('d/m/Y',strtotime('- '.$i.' months'));
+           $tabDateFormat[] = self::getMois($nouvelleDate);
+        }
+        var_dump($tabDateFormat);
+        return $tabDateFormat;
+    }
+
+    /**
+     *Formatte les dates du tableau en paramètre de aaaamm -> mm/aaaa
+     * @param array $date
+     *
+     * @return array
+     */
+    public static function getTableauDateAffichage($tabDate) : array {
+        $tailleTableau = (count($tabDate)) -1;
+        $tabDateAffichage = [];
+        for ($i=0; $i<=$tailleTableau ; $i++){
+           $anneemois = $tabDate[$i];
+           $annee = substr($anneemois,0,4);
+           $mois = substr($anneemois,4);
+           $date = $mois.'/'.$annee;
+           $tabDateAffichage[] = array('date' => $anneemois, 'dateaffichage' => $date);
+        }
+        return $tabDateAffichage;
     }
 
     /* gestion des erreurs */

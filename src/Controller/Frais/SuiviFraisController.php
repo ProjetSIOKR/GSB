@@ -16,6 +16,9 @@ class SuiviFraisController
         $pdo=PdoGsb::getPdoGsb();
         $role= Utilitaires::getRole();
         $fichesValides = $pdo->getFichesValidees();
+        if($role != 1 || !(Utilitaires::estConnecte())){
+            header('Location : /');
+        }
         MyTwig::afficheVue('FraisView/suivipaiement.html.twig', array(
             "fichesValidees"=>$fichesValides,
             'connecte'=>Utilitaires::estConnecte(),
@@ -30,9 +33,13 @@ class SuiviFraisController
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $mois = filter_input(INPUT_POST, 'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo=PdoGsb::getPdoGsb();
+        $role= Utilitaires::getRole();
         $totalFraisForfait = $pdo->getTotauxFicheFraisForfait($id, $mois);
         $totalFraisHorsForfait = $pdo->getTotauxFicheFraisHorsForfait($id, $mois);
         $utilisateur = $pdo->getUtilisateurFicheFraisValidee($id);
+        if($role != 1 || !(Utilitaires::estConnecte())){
+            header('Location : /');
+        }
         MyTwig::afficheVue('FraisView/suivipaiementajax.html.twig',array(
             'totalFraisForfait'=>$totalFraisForfait,
             'totalFraisHorsForfait'=>$totalFraisHorsForfait,
@@ -51,6 +58,9 @@ class SuiviFraisController
         $uri= Utilitaires::getUri();
         $role= Utilitaires::getRole();
         $fichesValides = $pdo->getFichesValidees();
+        if($role != 1 || !(Utilitaires::estConnecte())){
+            header('Location : /');
+        }
         MyTwig::afficheVue('FraisView/suivipaiement.html.twig', array(
             "fichesValidees"=>$fichesValides,
             'connecte'=>Utilitaires::estConnecte(),

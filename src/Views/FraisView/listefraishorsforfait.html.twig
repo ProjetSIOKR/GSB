@@ -15,15 +15,11 @@
             {% for unFrais in LesFraisHorsForfait %}
                     <form action="/gererfrais/updatefrais" method="post" role="form">
                             <tr>
-                                <td><input type="text" name="idFrais" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}"/> </td>
+                                <td><input type="text" name="idFrais" data_id="{{unFrais.id}}" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}"/> </td>
                                 <td><input type="text" name="libelle" value="{{unFrais.libelle|e}}"/></td>
                                 <td><input type="text" name="montant" value="{{unFrais.montant}}"/></td>
                                 <td>
-                                    <button type='submit' class="btn btn-danger">Supprimer ce frais</button>
-{#                                    <a href="/gererfrais/supprimerfrais/{{unFrais.id}}"#}
-{#                                       onclick="return confirm('Voulez-vous vraiment supprimer ce frais?');">#}
-{#                                        Supprimer ce frais#}
-{#                                    </a>#}
+                                    <span class="btn btn-danger btnSupprimer">Supprimer ce frais</span>
                                 </td>
                                 <td>
                                     <button type='submit' class="btn btn-success">Modifier</button>
@@ -61,3 +57,24 @@
         </form>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+    });
+    $('.btnSupprimer').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        input = td.children('input');
+        id=input.attr('data_id');
+        $.ajax({
+            url: "/gererfrais/supprimerfrais",
+            type: 'POST',
+            data:{'id':id
+            },
+            success:function(){
+                alert('Le frais hors forfait a été supprimé');
+                window.location.href='/gererfrais';
+            }
+        });
+    });
+</script>

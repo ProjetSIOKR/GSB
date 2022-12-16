@@ -164,7 +164,6 @@ abstract class Utilitaires {
            $nouvelleDate = date('d/m/Y',strtotime('- '.$i.' months'));
            $tabDateFormat[] = self::getMois($nouvelleDate);
         }
-        var_dump($tabDateFormat);
         return $tabDateFormat;
     }
 

@@ -81,15 +81,15 @@ class GestionFraisController{
         }
     }
 
-    #[Route('/gererfrais/supprimerfrais/{id}', methods: ['GET'],name: 'app_supprimer_creation_frais')]
+    #[Route('/gererfrais/supprimerfrais', methods: ['POST'],name: 'app_supprimer_creation_frais')]
     public function supprimerFrais() : void
     {
         $pdo=PdoGsb::getPdoGsb();
-        $idFrais = filter_input(INPUT_GET,'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $idFrais = filter_input(INPUT_POST,'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->supprimerFraisHorsForfait($idFrais);
     }
 
-    #[Route('/gererfrais/updatefrais', methods: ['POST'],name: 'app_supprimer_creation_frais')]
+    #[Route('/gererfrais/updatefrais', methods: ['POST'],name: 'app_update_creation_frais')]
     public function updateFrais() : void
     {
         $pdo=PdoGsb::getPdoGsb();
@@ -98,7 +98,6 @@ class GestionFraisController{
         $montant = filter_input(INPUT_POST, 'montant', FILTER_VALIDATE_FLOAT);
         $dateFrais =  filter_input(INPUT_POST, 'dateFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant);
-        header('Location: /gererfrais');
     }
 
 }

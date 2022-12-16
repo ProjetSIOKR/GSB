@@ -64,14 +64,13 @@ CREATE TABLE IF NOT EXISTS utilisateur (
   FOREIGN KEY (id_role) REFERENCES role(id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS securisationConnexion (
-     id int NOT NULL,
-    tentative_mdp_id int(5) DEFAULT 0,
-    tentative_a2f int(5) DEFAULT 0,
-    bloque boolean NOT NULL default false,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES utilisateur(id)
-)ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS securisationconnexion (
+ id int(11) NOT NULL,
+ tentative_mdp_id int(5) DEFAULT 0,
+ tentative_a2f int(5) DEFAULT 0,
+ bloque tinyint(1) NOT NULL DEFAULT 0,
+ date datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS fichefrais (
   idutilisateur int NOT NULL,

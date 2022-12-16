@@ -24,7 +24,7 @@
                                     <td>{{ uneFiche.montantvalide }}</td>
                                     <td>{{ uneFiche.datemodif }}</td>
                                 </tr>
-                             {% endfor %}x
+                             {% endfor %}
                         </tbody>
                     </table>
                 <div class="form-group">
@@ -55,8 +55,7 @@
         $('#btnannuler').click(function(){
             $('.btnselect').prop("checked",false);
             document.getElementById('details').innerHTML = "";
-
-            });
+       });
         $('.btnselect').click(function(){
             id = $(this).attr('data_id');
             console.log(id);

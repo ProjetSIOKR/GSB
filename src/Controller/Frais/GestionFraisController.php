@@ -32,7 +32,7 @@ class GestionFraisController{
             MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
                 'erreurs'=>$erreurs,
                 'role'=>$role,
-                'uri'=>$_SERVER['REQUEST_URI'],
+                'uri'=>$uri,
                 'lesFrais'=>$lesFraisForfait,
                 'LesFraisHorsForfait'=>$lesFraisHorsForfait,
                 'connecte'=>Utilitaires::estConnecte()));
@@ -40,7 +40,7 @@ class GestionFraisController{
         }else{
             MyTwig::afficheVue('FraisView/frais.html.twig', array('annee' => $numAnnee,'mois' => $numMois,
                 'role'=>$role,
-                'uri'=>$_SERVER['REQUEST_URI'],
+                'uri'=>$uri,
                 'lesFrais'=>$lesFraisForfait,
                 'LesFraisHorsForfait'=>$lesFraisHorsForfait,
                 'connecte'=>Utilitaires::estConnecte()));
@@ -77,7 +77,28 @@ class GestionFraisController{
             header('Location: /gererfrais');
         } else {
             $pdo->creeNouveauFraisHorsForfait($idutilisateur, $mois, $libelle, $dateFrais, $montant);
+            header('Location: /gererfrais');
         }
+    }
+
+    #[Route('/gererfrais/supprimerfrais/{id}', methods: ['GET'],name: 'app_supprimer_creation_frais')]
+    public function supprimerFrais() : void
+    {
+        $pdo=PdoGsb::getPdoGsb();
+        $idFrais = filter_input(INPUT_GET,'id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->supprimerFraisHorsForfait($idFrais);
+    }
+
+    #[Route('/gererfrais/updatefrais', methods: ['POST'],name: 'app_supprimer_creation_frais')]
+    public function updateFrais() : void
+    {
+        $pdo=PdoGsb::getPdoGsb();
+        $idFrais = filter_input(INPUT_POST,'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $libelle = filter_input(INPUT_POST, 'libelle', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $montant = filter_input(INPUT_POST, 'montant', FILTER_VALIDATE_FLOAT);
+        $dateFrais =  filter_input(INPUT_POST, 'dateFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant);
+        header('Location: /gererfrais');
     }
 
 }

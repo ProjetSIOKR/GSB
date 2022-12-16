@@ -136,7 +136,7 @@ class PdoGsb
     //Récuperer les infos de la table securisationconnexion
      public function getInfosSecurisationConnexion($id) {
         $requetePrepare = $this->connexion->prepare(
-                'SELECT securisationConnexion.id, securisationConnexion.tentative_mdp_id, securisationConnexion.bloque, securisationConnexion.tentative_a2f '
+                'SELECT securisationConnexion.id, securisationConnexion.tentative_mdp_id, securisationConnexion.bloque, securisationConnexion.tentative_a2f, securisationconnexion.date '
                 . 'FROM securisationConnexion '
                 . 'WHERE securisationConnexion.id = :unId'
         );
@@ -530,6 +530,30 @@ class PdoGsb
         $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
         $requetePrepare->execute();
     }
+
+    /**
+     * modifier le frais hors forfait dont l'id est passé en argument
+     * @param $idFrais
+     * @param $libelle
+     * @param $dateFrais
+     * @param $montant
+     * @return void
+     */
+    public function updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant): void
+    {
+        $dateFr = Utilitaires::dateFrancaisVersAnglais($dateFrais);
+        $requetePrepare = $this->connexion->prepare(
+            'UPDATE lignefraishorsforfait '
+            . 'SET libelle = :unLibelle, date = :uneDateFr, montant = :unMontant '
+            . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+        );
+        $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unLibelle', $libelle, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':uneDateFr', $dateFr, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unMontant', $montant, PDO::PARAM_INT);
+        $requetePrepare->execute();
+    }
+
 
     /**
      * Retourne les mois pour lesquel un visiteur a une fiche de frais

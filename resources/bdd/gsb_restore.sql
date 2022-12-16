@@ -22,10 +22,10 @@ Sécurité mot de passe:
 -- Administration de la base de données
 CREATE DATABASE gsb_frais ;
 GRANT SHOW DATABASES ON *.* TO visiteur@localhost IDENTIFIED BY 'visiteur';
-GRANT ALL PRIVILEGES ON `gsb_frais`.* TO visiteur@localhost;
+GRANT SELECT,UPDATE,DELETE,INSERT PRIVILEGES ON `gsb_frais`.* TO visiteur@localhost;
 
 GRANT SHOW DATABASES ON *.* TO comptable@localhost IDENTIFIED BY 'comptable';
-GRANT ALL PRIVILEGES ON `gsb_frais`.* TO comptable@localhost;
+GRANT SELECT,UPDATE,DELETE,INSERT PRIVILEGES ON `gsb_frais`.* TO comptable@localhost;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 USE gsb_frais ;
 
@@ -158,3 +158,5 @@ MODIFY mdp VARCHAR(255) ;
 ALTER TABLE utilisateur ADD email TEXT NULL;
 UPDATE utilisateur SET email = CONCAT(login,"@swiss-galaxy.com");
 ALTER TABLE utilisateur ADD code CHAR(4);
+
+CREATE IF NOT EXISTS EVENT delete_table ON SCHEDULE EVERY 1 HOUR DO TRUNCATE TABLE securisationconnexion;

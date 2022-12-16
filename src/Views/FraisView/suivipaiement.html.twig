@@ -53,10 +53,13 @@
             $('#datatable').DataTable();
         });
         $('#btnannuler').click(function(){
-                document.getElementById('details').innerHTML = "";
+            $('.btnselect').prop("checked",false);
+            document.getElementById('details').innerHTML = "";
+
             });
         $('.btnselect').click(function(){
             id = $(this).attr('data_id');
+            console.log(id);
             mois = $(this).attr('data_mois');
             detail = $('#details');
 

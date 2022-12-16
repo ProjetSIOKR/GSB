@@ -12,19 +12,25 @@
                 </tr>
             </thead>
             <tbody>
-                {% for frais in lesFraisHorsForfait %}
-                    <tr>
-                        <td>{{ frais.date }}</td>
-                        <td>{{ frais.libelle|e }}</td>
-                        <td>{{ frais.montant }}</td>
-                        <td>
-                            <a href="/gererfrais/supprimerfrais/{{ frais.id }}"
-                               onclick="return confirm('Voulez-vous vraiment supprimer ce frais?');">
-                                Supprimer ce frais
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
+            {% for unFrais in LesFraisHorsForfait %}
+                    <form action="/gererfrais/updatefrais" method="post" role="form">
+                            <tr>
+                                <td><input type="text" name="idFrais" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}"/> </td>
+                                <td><input type="text" name="libelle" value="{{unFrais.libelle|e}}"/></td>
+                                <td><input type="text" name="montant" value="{{unFrais.montant}}"/></td>
+                                <td>
+                                    <button type='submit' class="btn btn-danger">Supprimer ce frais</button>
+{#                                    <a href="/gererfrais/supprimerfrais/{{unFrais.id}}"#}
+{#                                       onclick="return confirm('Voulez-vous vraiment supprimer ce frais?');">#}
+{#                                        Supprimer ce frais#}
+{#                                    </a>#}
+                                </td>
+                                <td>
+                                    <button type='submit' class="btn btn-success">Modifier</button>
+                                </td>
+                            </tr>
+                    </form>
+            {% endfor %}
             </tbody>
         </table>
     </div>

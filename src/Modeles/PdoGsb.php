@@ -665,7 +665,7 @@ class PdoGsb
     public function setFicheFraisMiseEnPaiement(int $idVisiteurMois): void {
         $date=(date("Y-m-d"));
         $requestPrepare = $this->connexion->prepare(
-            "UPDATE fichefrais set idetat = 'MP', datemodif = :uneDate WHERE CONCAT(idvisiteur,mois) = :unIdVisiteurMois"
+            "UPDATE fichefrais set idetat = 'MP', datemodif = :uneDate WHERE CONCAT(fichefrais.idutilisateur,fichefrais.mois) = :unIdVisiteurMois"
         );
         $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
         $requestPrepare->bindParam(':uneDate', $date);
@@ -673,9 +673,37 @@ class PdoGsb
     }
     public function getFicheFraisEtat(int $idVisiteurMois):array {
         $requestPrepare = $this->connexion->prepare(
-            'select idetat from fichefrais WHERE CONCAT(idvisiteur,mois) = :unIdVisiteurMois'
+            'select idetat from fichefrais WHERE CONCAT(idutilisateur,mois) = :unIdVisiteurMois'
         );
         $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        return $requestPrepare->fetch();
+    }
+
+    /**
+     * Méthode permettant de récupérer toutes les fiches frais de l'utilisateur en paramètre
+     * @param int $idVisiteur
+     * @return array
+     */
+    public function  getUtilisateurFicheFrais(int $idVisiteur): array {
+        $requestPrepare = $this->connexion->prepare(
+            "select distinct utilisateur.nom, utilisateur.prenom, utilisateur.id from lignefraisforfait inner join utilisateur on lignefraisforfait.idutilisateur=utilisateur.id where lignefraisforfait.idutilisateur = :unId "
+        );
+        $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        return $requestPrepare->fetch();
+    }
+
+    /**
+     * Méthode permettant de récupérer toutes les fiches frais validées de l'utilisateur en paramètre
+     * @param int $idVisiteur
+     * @return array
+     */
+    public function  getUtilisateurFicheFraisValidee(int $idVisiteur): array {
+        $requestPrepare = $this->connexion->prepare(
+            "select distinct utilisateur.nom, utilisateur.prenom, utilisateur.id, fichefrais.mois from lignefraisforfait inner join utilisateur on lignefraisforfait.idutilisateur=utilisateur.id inner join fichefrais on lignefraisforfait.idutilisateur = fichefrais.idutilisateur  where lignefraisforfait.idutilisateur = :unId and fichefrais.idetat='VA' "
+        );
+        $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
         $requestPrepare->execute();
         return $requestPrepare->fetch();
     }

@@ -30,7 +30,7 @@ class EtatFraisController{
     
     #[Route('/voiretatfrais', methods: ['POST'], name: 'app_voir_frais')]
     public function voirEtatFrais(): void {
-        $idVisiteur = $_SESSION['idutilisateur'];
+        $idVisiteur = Utilitaires::getId();
         $leMois = filter_input(INPUT_POST, 'lstMois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lesMois = PdoGsb::getPdoGsb()->getLesMoisDisponibles($idVisiteur);
         $role = Utilitaires::getRole();

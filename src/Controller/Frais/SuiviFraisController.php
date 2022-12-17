@@ -19,7 +19,7 @@ class SuiviFraisController
         if($role != 1 || !(Utilitaires::estConnecte())){
             header('Location : /');
         }
-        MyTwig::afficheVue('FraisView/suivipaiement.html.twig', array(
+        MyTwig::afficheVue('FraisView/Suivi/suivipaiement.html.twig', array(
             "fichesValidees"=>$fichesValides,
             'connecte'=>Utilitaires::estConnecte(),
             'role'=>$role,
@@ -40,7 +40,7 @@ class SuiviFraisController
         if($role != 1 || !(Utilitaires::estConnecte())){
             header('Location : /');
         }
-        MyTwig::afficheVue('FraisView/suivipaiementajax.html.twig',array(
+        MyTwig::afficheVue('FraisView/Suivi/suivipaiementajax.html.twig',array(
             'totalFraisForfait'=>$totalFraisForfait,
             'totalFraisHorsForfait'=>$totalFraisHorsForfait,
             'utilisateur'=>$utilisateur
@@ -61,7 +61,7 @@ class SuiviFraisController
         if($role != 1 || !(Utilitaires::estConnecte())){
             header('Location : /');
         }
-        MyTwig::afficheVue('FraisView/suivipaiement.html.twig', array(
+        MyTwig::afficheVue('FraisView/Suivi/suivipaiement.html.twig', array(
             "fichesValidees"=>$fichesValides,
             'connecte'=>Utilitaires::estConnecte(),
             'role'=>$role,

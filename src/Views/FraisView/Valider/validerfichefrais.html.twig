@@ -5,7 +5,7 @@
 {% block contenu %}
     <div class="form-group form-inline w-50">
                 <label for="visiteur"> Choisir le Visiteur : </label>
-                <select id="lesVisiteurs" name="lesVisiteurs" class="form-control">
+                <select id="lesVisiteurs" name="lesVisiteurs" class="form-control infos">
                     <option selected disabled>Choisir un Visiteur</option>
                     {% for unVisiteur in lesVisiteurs %}
                         {% if unVisiteur ==  null%}
@@ -20,15 +20,15 @@
                     {% endfor %}
                 </select>
                 <label for="lstMois" accesskey="n">Mois : </label>
-                <select id="lstMois" name="lstMois" class="form-control">
+                <select id="lstMois" name="lstMois" class="form-control infos">
                     {% for mois in lesMois %}
                         {% if mois ==  moisASelectionner%}
-                            <option selected value="{{ mois.mois }}">
-                                {{mois.numMois}}/{{mois.numAnnee}}
+                            <option selected value="{{ mois.date }}">
+                                {{mois.dateaffichage}}
                             </option>   
                         {% else %}
-                            <option selected value="{{ mois.mois }}">
-                                {{mois.numMois}}/{{mois.numAnnee}}
+                            <option value="{{ mois.date }}">
+                                {{mois.dateaffichage}}
                             </option> 
                         {% endif %}
                     {% endfor %}
@@ -45,9 +45,21 @@
     <script>
         $(document).ready(function () {
         });
-        $('#lesVisiteurs').change(function(){
-            let visiteur = $('#lesVisiteurs option:selected');
-            console.log(visiteur.val());
-        })
+        $('.infos').change(function(){
+            visiteur = $('#lesVisiteurs option:selected').val();
+            leMois = $('#lstMois option:selected').val();
+            detailsVisiteur = $('#detailsVisiteur');
+            $.ajax({
+                url: "/validerfichefrais/recupererinfos",
+                type: 'POST',
+                data:{'idVisiteur': visiteur,
+                    'mois': leMois
+                },
+                success:function(result){
+                    detailsVisiteur.empty();
+                    detailsVisiteur.append(result);
+                }
+            });
+        });
     </script>
 {% endblock %}

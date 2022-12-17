@@ -36,12 +36,38 @@ class ValiderFraisController{
         $pdo=PdoGsb::getPdoGsb();
         $idVisiteur = filter_input(INPUT_POST,'idVisiteur', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur, $mois);
-        $lesFraisForfait = $pdo->getLesFraisForfait($idVisiteur, $mois);
-        MyTwig::afficheVue('FraisView/Valider/frais.html.twig', array(
-            'lesFrais'=>$lesFraisForfait,
-            'LesFraisHorsForfait'=>$lesFraisHorsForfait
-        ));
+        $lesInfos=$pdo->getLesInfosFicheFrais($idVisiteur,$mois);
+        //var_dump($lesInfos);
+        if ($lesInfos===false) {
+            Utilitaires::ajouterErreur('Pas de Fiche de frais pour ce visiteur pour le mois sélectionné');
+            $lesErreurs = $_REQUEST['erreurs'];
+            MyTwig::afficheVue('FraisView/Valider/frais.html.twig', array(
+                'erreurs'=>$lesErreurs
+            ));
+        }else{
+            if ($lesInfos['idEtat'] !== 'CL') {
+                $pdo->majEtatFicheFrais($idVisiteur,$mois,'CL');
+            }
+            $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur, $mois);
+            $lesFraisForfait = $pdo->getLesFraisForfait($idVisiteur, $mois);
+            $nbJustificatifs = $lesInfos['nbJustificatifs'];
+            MyTwig::afficheVue('FraisView/Valider/frais.html.twig', array(
+                'lesFrais'=>$lesFraisForfait,
+                'LesFraisHorsForfait'=>$lesFraisHorsForfait,
+                'nbJustificatifs'=>$nbJustificatifs
+            ));
+        }
+    }
+
+    #[Route('/corrigerfraisforfait', methods: ['POST'],name: 'app_corriger_frais_forfait')]
+    public function corrigerFraisForfait(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $lesFrais = json_decode(stripslashes($_POST['tabLesFrais']),true);
+        $idVisiteur = filter_input(INPUT_POST,'idVisiteur', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $mois = Utilitaires::getMois(date('d/m/Y'));
+        if(Utilitaires::lesQteFraisValides($lesFrais)){
+            $pdo->majFraisForfait($idVisiteur, $mois, $lesFrais);
+        }
     }
 
 }

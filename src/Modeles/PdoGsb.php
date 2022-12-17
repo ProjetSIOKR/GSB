@@ -594,7 +594,7 @@ class PdoGsb
      * @return un tableau avec des champs de jointure entre une fiche de frais
      *         et la ligne d'état
      */
-    public function getLesInfosFicheFrais($idVisiteur, $mois): array {
+    public function getLesInfosFicheFrais($idVisiteur, $mois): array|bool {
         $requetePrepare = $this->connexion->prepare(
                 'SELECT fichefrais.idetat as idEtat, '
                 . 'fichefrais.datemodif as dateModif,'

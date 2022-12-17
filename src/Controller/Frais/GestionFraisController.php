@@ -16,7 +16,7 @@ class GestionFraisController{
         }
         $idutilisateur = Utilitaires::getId();
         if(isset($_SESSION['erreurs'])){
-            $erreurs = $_SESSION['erreurs'];
+            $erreurs = Utilitaires::getErreursSession();
         }
         $pdo= PdoGsb::getPdoGsb();
         $uri = Utilitaires::getUri();
@@ -51,6 +51,8 @@ class GestionFraisController{
     {
         $pdo=PdoGsb::getPdoGsb();
         $lesFrais = filter_input(INPUT_POST, 'LesFrais', FILTER_DEFAULT, FILTER_FORCE_ARRAY);
+        var_dump($lesFrais);
+        exit();
         $idutilisateur = Utilitaires::getId();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         if (Utilitaires::lesQteFraisValides($lesFrais)) {

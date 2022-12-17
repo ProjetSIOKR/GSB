@@ -1,3 +1,5 @@
 {% include "AppView/erreurs.html.twig" %}
-{% include "FraisView/Valider/listefraisforfait.html.twig" %}
-{% include "FraisView/Valider/listefraishorsforfait.html.twig" %}
+{% if (lesFrais and LesFraisHorsForfait) or (lesFrais or LesFraisHorsForfait) %}
+    {% include "FraisView/Valider/listefraisforfait.html.twig" %}
+    {% include "FraisView/Valider/listefraishorsforfait.html.twig" %}
+{% endif %}

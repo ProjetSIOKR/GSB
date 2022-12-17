@@ -353,6 +353,10 @@ abstract class Utilitaires {
         }
     }
 
+    public static function getErreursSession(): array {
+        return ($_SESSION['erreurs']);
+    }
+
     /**
      * Méthode permettant de faire une redirection sois en php si possible sois en JavaScript
      * @param $url

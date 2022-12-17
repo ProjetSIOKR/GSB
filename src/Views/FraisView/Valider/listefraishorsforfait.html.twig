@@ -1,6 +1,6 @@
 <hr>
 <div class="row">
-    <div class="panel panel-info">
+    <div class="panel panel-orange">
         <div class="panel-heading">Descriptif des éléments hors forfait</div>
         <table class="table table-bordered table-responsive">
             <thead>
@@ -12,69 +12,51 @@
             </tr>
             </thead>
             <tbody>
+            {% set idForm = 1 %}
             {% for unFrais in LesFraisHorsForfait %}
-                <form action="/gererfrais/updatefrais" method="post" role="form">
                     <tr>
-                        <td><input type="text" name="idFrais" data_id="{{unFrais.id}}" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}"/> </td>
-                        <td><input type="text" name="libelle" value="{{unFrais.libelle|e}}"/></td>
-                        <td><input type="text" name="montant" value="{{unFrais.montant}}"/></td>
-                        <td>
-                            <span class="btn btn-danger btnSupprimer">Supprimer ce frais</span>
-                        </td>
-                        <td>
-                            <button type='submit' class="btn btn-success">Modifier</button>
-                        </td>
+                        <td><form id="{{ idForm }}"><input type="text" name="idFrais" data_id="{{unFrais.id}}" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}"/></form></td>
+                        <td><input form="{{ idForm }}" type="text" name="libelle" value="{{unFrais.libelle|e}}"/></td>
+                        <td><input form="{{ idForm }}" type="text" name="montant" value="{{unFrais.montant}}"/></td>
+                            <td>
+                                <span class="btn btn-success btnCorriger">Corriger</span>
+                                <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
+                            </td>
                     </tr>
-                </form>
+                {% set idForm = idForm + 1 %}
             {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
-<div class="row">
-    <h3>Nouvel élément hors forfait</h3>
-    <div class="col-md-4">
-        <form action="/gererfrais/validercreationfrais"
-              method="post" role="form">
-            <div class="form-group">
-                <label for="txtDateHF">Date (jj/mm/aaaa): </label>
-                <input type="date" id="txtDateHF" name="dateFrais"
-                       class="form-control" id="text">
-            </div>
-            <div class="form-group">
-                <label for="txtLibelleHF">Libellé</label>
-                <input type="text" id="txtLibelleHF" name="libelle" class="form-control" id="text">
-            </div>
-            <div class="form-group">
-                <label for="txtMontantHF">Montant : </label>
-                <div class="input-group">
-                    <span class="input-group-addon">€</span>
-                    <input type="text" id="txtMontantHF" name="montant" class="form-control" value="">
-                </div>
-            </div>
-            <button class="btn btn-success" type="submit">Ajouter</button>
-            <button class="btn btn-danger" type="reset">Effacer</button>
-        </form>
+    <div>
+        <label for="nbJustificatifs">Nombre de justificatifs:</label>
+        <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}">
     </div>
+    <br>
+    <button class="btn btn-success btnCorriger">Corriger</button>
+    <button class="btn btn-danger" type="reset">Réinitialiser</button>
 </div>
+<br>
 <script>
     $(document).ready(function() {
     });
-    $('.btnSupprimer').click(function(){
+    $('.btnCorriger').click(function(){
         enfant = $(this).parent();
         parents = enfant.parent();
         td = parents.children('td');
         input = td.children('input');
         id=input.attr('data_id');
-        $.ajax({
-            url: "/gererfrais/supprimerfrais",
-            type: 'POST',
-            data:{'id':id
-            },
-            success:function(){
-                alert('Le frais hors forfait a été supprimé');
-                window.location.href='/gererfrais';
-            }
-        });
+        console.log(id);
+        // $.ajax({
+        //     url: "/gererfrais/supprimerfrais",
+        //     type: 'POST',
+        //     data:{'id':id
+        //     },
+        //     success:function(){
+        //         alert('Le frais hors forfait a été supprimé');
+        //         window.location.href='/gererfrais';
+        //     }
+        // });
     });
+
 </script>

@@ -86,7 +86,7 @@
                 visiteurmois = id+mois;
                 idVisiteurMois.push(visiteurmois);
             });
-            let jsonVisiteurs = JSON.stringify(idVisiteurMois);
+            jsonVisiteurs = JSON.stringify(idVisiteurMois);
             $.ajax({
                 url: "/misenpaiement",
                 type: 'POST',

@@ -33,11 +33,12 @@ class ValiderFraisController{
     #[Route('/validerfichefrais/recupererinfos', methods: ['POST'],name: 'app_recuperer_infos_fiche')]
     public function updateFrais() : void
     {
+        Utilitaires::supprimerIdVisiteur();
         $pdo=PdoGsb::getPdoGsb();
         $idVisiteur = filter_input(INPUT_POST,'idVisiteur', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        Utilitaires::ajouterIdVisiteur($idVisiteur);
         $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lesInfos=$pdo->getLesInfosFicheFrais($idVisiteur,$mois);
-        //var_dump($lesInfos);
         if ($lesInfos===false) {
             Utilitaires::ajouterErreur('Pas de Fiche de frais pour ce visiteur pour le mois sélectionné');
             $lesErreurs = $_REQUEST['erreurs'];
@@ -63,11 +64,12 @@ class ValiderFraisController{
     public function corrigerFraisForfait(): void {
         $pdo=PdoGsb::getPdoGsb();
         $lesFrais = json_decode(stripslashes($_POST['tabLesFrais']),true);
-        $idVisiteur = filter_input(INPUT_POST,'idVisiteur', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $idVisiteur = Utilitaires::getIdVisiteur();
         $mois = Utilitaires::getMois(date('d/m/Y'));
         if(Utilitaires::lesQteFraisValides($lesFrais)){
             $pdo->majFraisForfait($idVisiteur, $mois, $lesFrais);
         }
+
     }
 
 }

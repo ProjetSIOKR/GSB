@@ -49,6 +49,36 @@ abstract class Utilitaires {
     }
 
     /**
+     * Ajoute l'id du visiteur selectionné dans la variable de session (concerne le comptable)
+     * @param $id id du visiteur
+     * @return void
+     */
+    public static function ajouterIdVisiteur($id): void
+    {
+        $_SESSION['idselect']= intval($id);
+    }
+
+    /**
+     * Retourne l'id du visiteur enregistré dans la variable de session (concerne le comptable)
+     * @return int id du visiteur enregistré dans la variable de session
+     */
+    public static function getIdVisiteur() : int
+    {
+        return $_SESSION['idselect'];
+    }
+
+    /**
+     * Supprime l'id du visiteur enregistré dans la variable de session
+     * @return void
+     */
+    public static function supprimerIdVisiteur() : void
+    {
+        if(isset($_SESSION['idselect'])){
+            $_SESSION['idselect']=[];
+        }
+    }
+
+    /**
      * Méthode retournant l'uri de la page courante
      * @return string
      */
@@ -353,6 +383,10 @@ abstract class Utilitaires {
         }
     }
 
+    /**
+     * Retourne les erreurs enregistrées dans la variable de session
+     * @return array
+     */
     public static function getErreursSession(): array {
         return ($_SESSION['erreurs']);
     }

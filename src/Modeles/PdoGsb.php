@@ -372,6 +372,16 @@ class PdoGsb
             $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
             $requetePrepare->bindParam(':idFrais', $unIdFrais, PDO::PARAM_STR);
             $requetePrepare->execute();
+
+            $requetePrepare2 = $this->connexion->prepare(
+                'UPDATE fichefrais '
+                . 'SET fichefrais.datemodif = CAST(now() AS DATE) '
+                . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
+                . 'AND fichefrais.mois = :unMois '
+            );
+            $requetePrepare2->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+            $requetePrepare2->bindParam(':unMois', $mois, PDO::PARAM_STR);
+            $requetePrepare2->execute();
         }
     }
 

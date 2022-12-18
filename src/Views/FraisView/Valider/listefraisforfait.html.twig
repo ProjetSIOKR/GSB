@@ -29,7 +29,7 @@
         detailsFrais.each(function(){
             inputFrais = $(this).children('input');
             idFrais = inputFrais.attr('data_id');
-            valeurFrais = inputFrais.attr('value');
+            valeurFrais = inputFrais.val();
             lesFrais[idFrais]=valeurFrais;
         });
         jsonLesFrais = JSON.stringify(lesFrais);
@@ -39,7 +39,6 @@
             data:{'tabLesFrais': jsonLesFrais
             },
             success:function(result){
-                console.log(result);
                 detailsFrais.append(result);
                 alert('Les modifications ont bien été prises en compte !');
             }

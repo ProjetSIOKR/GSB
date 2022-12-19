@@ -73,7 +73,7 @@ class ValiderFraisController{
             $pdo->majFraisForfait($idVisiteur, $mois, $lesFrais);
         }
     }
-    #[Route('/corrigerfraishorsforfait', methods: ['POST'],name: 'app_corriger_frais_forfait')]
+    #[Route('/corrigerfraishorsforfait', methods: ['POST'],name: 'app_corriger_frais_hors_forfait')]
     public function corrigerFraisHorsForfait(): void {
         $pdo=PdoGsb::getPdoGsb();
         $idVisiteur = Utilitaires::getIdVisiteur();
@@ -81,6 +81,14 @@ class ValiderFraisController{
         $lesFrais = json_decode(stripslashes($_POST['tabFraisHF']),true);
         $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->majFraisHorsForfait($idVisiteur, $idFrais, $mois, $lesFrais);
+        MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
+    }
+
+    #[Route('/refuserfraishorsforfait', methods: ['POST'],name: 'app_refuser_frais_hors_forfait')]
+    public function refuserFraisHorsForfait(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $idFrais = filter_input(INPUT_POST,'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->refuserFraisHorsForfait($idFrais);
     }
 
     #[Route('/validerlesfraisforfait', methods: ['POST'],name: 'app_valider_frais_forfait')]
@@ -90,7 +98,6 @@ class ValiderFraisController{
         $idVisiteur = Utilitaires::getIdVisiteur();
         $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->validerFraisForfait($idVisiteur, $mois, $lesFrais);
-        MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
     }
 
 }

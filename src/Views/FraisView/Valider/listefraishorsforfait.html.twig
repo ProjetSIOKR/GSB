@@ -15,15 +15,17 @@
             {% set idForm = 1 %}
             {% for unFrais in LesFraisHorsForfait %}
                     <tr id="lesFraisHF">
-                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></form></td>
-                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
-                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
+                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ unFrais.estValide == 0 ? 'disabled' : '' }}/></form></td>
+                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{ unFrais.estValide == 0 ? 'REFUSER' : '' }} {{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ unFrais.estValide == 0 ? 'disabled' : '' }} /></td>
+                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ unFrais.estValide == 0 ? 'disabled' : '' }}/></td>
                         <td>
                             {% if etatFiche == 'VA' %}
-                            <span class="btn btn-success btnCorriger">Corriger</span>
-                            <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
-                            <span class="btn btn-danger btnReporter">Reporter</span>
-                            <span class="btn btn-danger btnRefuser">Refuser</span>
+                                {% if unFrais.estValide != 0 %}
+                                <span class="btn btn-success btnCorriger">Corriger</span>
+                                <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
+                                <span class="btn btn-danger btnReporter">Reporter</span>
+                                <span class="btn btn-danger btnRefuser">Refuser</span>
+                                {% endif %}
                             {% endif %}
                         </td>
                     </tr>
@@ -73,8 +75,28 @@
                 'tabFraisHF':jsonlesFraisHF
             },
             success:function(result){
+                detailsFrais.append();
                 alert('les modifications ont bien été prises en compte');
+                window.location.reload();
             }
         });
     });
+    $('.btnRefuser').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        id=inputId.attr('data_id');
+        $.ajax({
+            url: "/refuserfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+            },
+            success:function(){
+                alert('le frais a bien été refusé');
+                window.location.reload();
+            }
+        });
+    });
+
 </script>

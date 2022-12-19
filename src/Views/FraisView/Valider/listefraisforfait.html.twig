@@ -83,9 +83,10 @@
                 type: 'POST',
                 data:{'tabIdLesFrais': jsonLesFraisAValider
                 },
-                success:function(){
+                success:function(result){
+                    detailsFrais.append(result);
                     alert('Les frais sélectionnés ont été validés !');
-                    window.location.reload();
+                    // window.location.reload();
                 }
             });
         }

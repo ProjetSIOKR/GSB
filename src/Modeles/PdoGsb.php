@@ -358,16 +358,14 @@ class PdoGsb
                 'SELECT lignefraisforfait.estValide as estValide '
                 . 'FROM lignefraisforfait '
                 . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
-                . 'WHERE lignefraisforfait.mois = :unMois '
-                . 'WHERE lignefraisforfait.idfraisforfait = :unIdFraisForfait '
+                . 'AND lignefraisforfait.mois = :unMois '
+                . 'AND lignefraisforfait.idfraisforfait = :unIdFraisForfait '
         );
         $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unIdFraisForfait', $idFrais, PDO::PARAM_STR);
         $requetePrepare->execute();
-        return $requetePrepare->fetchAll();
-        $requetePrepare->execute();
-        return $requetePrepare->fetchAll();
+        return $requetePrepare->fetch();
     }
 
     /**
@@ -385,20 +383,22 @@ class PdoGsb
     public function majFraisForfait($idVisiteur, $mois, $lesFrais): void {
         $lesCles = array_keys($lesFrais);
         foreach ($lesCles as $unIdFrais) {
-            $qte = $lesFrais[$unIdFrais];
-            $requetePrepare = $this->connexion->prepare(
+            $tableauEtat= $this->getEtatValidationFraisForfait($idVisiteur,$mois,$unIdFrais);
+            if($tableauEtat['estValide']=== 0){
+                $qte = $lesFrais[$unIdFrais];
+                $requetePrepare = $this->connexion->prepare(
                     'UPDATE lignefraisforfait '
                     . 'SET lignefraisforfait.quantite = :uneQte '
                     . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
                     . 'AND lignefraisforfait.mois = :unMois '
                     . 'AND lignefraisforfait.idfraisforfait = :idFrais'
-            );
-            $requetePrepare->bindParam(':uneQte', $qte, PDO::PARAM_INT);
-            $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
-            $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
-            $requetePrepare->bindParam(':idFrais', $unIdFrais, PDO::PARAM_STR);
-            $requetePrepare->execute();
-
+                );
+                $requetePrepare->bindParam(':uneQte', $qte, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':idFrais', $unIdFrais, PDO::PARAM_STR);
+                $requetePrepare->execute();
+            }
         }
     }
 

@@ -1,3 +1,4 @@
+{% set nbClick = 0 %}
 <div class="row">
     <div class="col-md-4">
         <form method="post"
@@ -5,17 +6,28 @@
               role="form">
             <fieldset id="detailsFrais">
                 {% for frais in lesFrais %}
-                    <div class="form-group">
-                        <label for ="{{ frais.idfrais }}">{{ frais.libelle|e }}</label>
-                        <input type="text" id="lesFrais"
-                               data_id="{{ frais.idfrais }}"
-                               size="10" maxlenght="5"
-                               value="{{ frais.quantite }}"
-                               class="form-control">
-                    </div>
+                        <div class="form-group">
+                            {% if frais.estValide == 0 %}
+                                <input class="btnselect" type="checkbox" name="{{ frais.idfrais }}">
+                            {% endif %}
+                            <label for ="{{ frais.idfrais }}">{{ frais.libelle|e }}</label>
+                            <input type="text" id="lesFrais"
+                                   data_id="{{ frais.idfrais }}"
+                                   size="10" maxlenght="5"
+                                   value="{{ frais.quantite }}"
+                                   class="form-control lesInputs"
+                                   {{ etatFiche != 'VA' ? 'disabled' : '' }}
+                                   {{ frais.estValide == 1 ? 'disabled' : '' }}>
+                        </div>
                 {% endfor %}
-                <span class="btn btn-success" id="validerFrais">Corriger</span>
-                <button class="btn btn-danger" type="reset">Réinitialiser</button>
+                {% if etatFiche == 'VA' %}
+                    {% if lesFraisForfaitValide|length != 4 %}
+                    <span class="btn btn-success" id="validerFrais" data-click="{{ nbClick }}" style="display: none">Valider frais sélectionnés</span>
+                    <br/>
+                    <span class="btn btn-success" id="corrigerFrais">Corriger</span>
+                    <button class="btn btn-danger" type="reset">Réinitialiser</button>
+                    {% endif %}
+                {% endif %}
             </fieldset>
         </form>
     </div>
@@ -23,16 +35,17 @@
 <script>
     $(document).ready(function () {
     });
-    $('#validerFrais').click(function(){
-        lesFrais= {};
-        detailsFrais = $('#detailsFrais').children('div');
+    {{ frais.estValide == 1 ? 'document.querySelector(".btnselect").style.display = "none"' : '' }}
+    $('#corrigerFrais').click(function(){
+        let lesFrais= {};
+        let detailsFrais = $('#detailsFrais').children('div');
         detailsFrais.each(function(){
-            inputFrais = $(this).children('input');
-            idFrais = inputFrais.attr('data_id');
-            valeurFrais = inputFrais.val();
+            let inputFrais = $(this).children('.lesInputs');
+            let idFrais = inputFrais.attr('data_id');
+            let valeurFrais = inputFrais.val();
             lesFrais[idFrais]=valeurFrais;
         });
-        jsonLesFrais = JSON.stringify(lesFrais);
+        let jsonLesFrais = JSON.stringify(lesFrais);
         $.ajax({
             url: "/corrigerfraisforfait",
             type: 'POST',
@@ -44,4 +57,38 @@
             }
         });
     });
+    let lesFraisAValider = [];
+    $('.btnselect').click(function(){
+        let id = $(this).attr('name');
+        let fraisId;
+        if ($(this).is(':checked')){
+            document.querySelector("#validerFrais").style.display = "block";
+            lesFraisAValider.push(id);
+            document.querySelector('#validerFrais').setAttribute('data-click', lesFraisAValider.length);
+        }else{
+            fraisId=lesFraisAValider.indexOf(id);
+            lesFraisAValider.splice(fraisId,1);
+            document.querySelector('#validerFrais').setAttribute('data-click', lesFraisAValider.length);
+            if(lesFraisAValider.length === 0){
+                document.querySelector("#validerFrais").style.display = "none"
+            }
+        }
+    });
+    $('#validerFrais').click(function(){
+        if(lesFraisAValider.length > 0){
+            let jsonLesFraisAValider = JSON.stringify(lesFraisAValider);
+            let detailsFrais = $('#detailsFrais').children('div');
+            $.ajax({
+                url: "/validerlesfraisforfait",
+                type: 'POST',
+                data:{'tabIdLesFrais': jsonLesFraisAValider
+                },
+                success:function(){
+                    alert('Les frais sélectionnés ont été validés !');
+                    window.location.reload();
+                }
+            });
+        }
+    });
+
 </script>

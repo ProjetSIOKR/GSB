@@ -46,16 +46,19 @@ class ValiderFraisController{
                 'erreurs'=>$lesErreurs
             ));
         }else{
-            if ($lesInfos['idEtat'] !== 'CL') {
+            if ($lesInfos['idEtat'] !== 'CL' && $lesInfos['idEtat'] !== 'VA') {
                 $pdo->majEtatFicheFrais($idVisiteur,$mois,'CL');
             }
             $lesFraisHorsForfait = $pdo->getLesFraisHorsForfait($idVisiteur, $mois);
             $lesFraisForfait = $pdo->getLesFraisForfait($idVisiteur, $mois);
+            $lesFraisForfaitValide= $pdo->getLesFraisForfaitValide($idVisiteur,$mois);
             $nbJustificatifs = $lesInfos['nbJustificatifs'];
             MyTwig::afficheVue('FraisView/Valider/frais.html.twig', array(
                 'lesFrais'=>$lesFraisForfait,
                 'LesFraisHorsForfait'=>$lesFraisHorsForfait,
-                'nbJustificatifs'=>$nbJustificatifs
+                'nbJustificatifs'=>$nbJustificatifs,
+                'etatFiche'=>$lesInfos['idEtat'],
+                'lesFraisForfaitValide'=>$lesFraisForfaitValide
             ));
         }
     }
@@ -69,7 +72,16 @@ class ValiderFraisController{
         if(Utilitaires::lesQteFraisValides($lesFrais)){
             $pdo->majFraisForfait($idVisiteur, $mois, $lesFrais);
         }
+    }
 
+    #[Route('/validerlesfraisforfait', methods: ['POST'],name: 'app_valider_frais_forfait')]
+    public function validerFraisForfait(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $lesFrais = json_decode(stripslashes($_POST['tabIdLesFrais']));
+        $idVisiteur = Utilitaires::getIdVisiteur();
+        $mois = Utilitaires::getMois(date('d/m/Y'));
+        $pdo->validerFraisForfait($idVisiteur, $mois, $lesFrais);
+        MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
     }
 
 }

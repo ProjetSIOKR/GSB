@@ -14,16 +14,18 @@
             <tbody>
             {% set idForm = 1 %}
             {% for unFrais in LesFraisHorsForfait %}
-                    <tr>
-                        <td><form id="{{ idForm }}"><input type="text" name="idFrais" data_id="{{unFrais.id}}" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></form></td>
-                        <td><input form="{{ idForm }}" type="text" name="libelle" value="{{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
-                        <td><input form="{{ idForm }}" type="text" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
-                            <td>
-                                {% if etatFiche == 'VA' %}
-                                <span class="btn btn-success btnCorriger">Corriger</span>
-                                <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
-                                {% endif %}
-                            </td>
+                    <tr id="lesFraisHF">
+                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></form></td>
+                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
+                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
+                        <td>
+                            {% if etatFiche == 'VA' %}
+                            <span class="btn btn-success btnCorriger">Corriger</span>
+                            <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
+                            <span class="btn btn-danger btnReporter">Reporter</span>
+                            <span class="btn btn-danger btnRefuser">Refuser</span>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% set idForm = idForm + 1 %}
             {% endfor %}
@@ -48,19 +50,31 @@
         enfant = $(this).parent();
         parents = enfant.parent();
         td = parents.children('td');
-        input = td.children('input');
-        id=input.attr('data_id');
-        console.log(id);
-        // $.ajax({
-        //     url: "/gererfrais/supprimerfrais",
-        //     type: 'POST',
-        //     data:{'id':id
-        //     },
-        //     success:function(){
-        //         alert('Le frais hors forfait a été supprimé');
-        //         window.location.href='/gererfrais';
-        //     }
-        // });
+        inputId = td.find('#idFraisHF');
+        inputDate = td.find('#dateFraisHF');
+        inputLibelle = td.find('#libelleFraisHF');
+        inputMontant = td.find('#montant');
+        id=inputId.attr('data_id');
+        date= inputDate.val()!='' ? inputDate.val() : inputDate.attr('value');
+        libelle= inputLibelle.val()!='' ? inputLibelle.val() : inputLibelle.attr('value');
+        montant = inputMontant.val()!='' ? inputMontant.val() : inputMontant.attr('value');
+        leMois = $('#lstMois option:selected').val();
+        let objFraisHF = {};
+        objFraisHF['date']=date;
+        objFraisHF['libelle']=libelle;
+        objFraisHF['montant']=montant;
+        jsonlesFraisHF= JSON.stringify(objFraisHF);
+        let detailsFrais = $('#detailsFrais').children('div');
+        $.ajax({
+            url: "/corrigerfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+                'mois':leMois,
+                'tabFraisHF':jsonlesFraisHF
+            },
+            success:function(result){
+                alert('les modifications ont bien été prises en compte');
+            }
+        });
     });
-
 </script>

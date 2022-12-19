@@ -346,7 +346,7 @@ class PdoGsb
     }
 
     /**
-     * Retourne l'état de validation du frais forfaiut en paramètre par rapport a l'id du visiteur et du mois
+     * Retourne l'état de validation du frais forfait en paramètre par rapport a l'id du visiteur et du mois
      * @param $idVisiteur
      * @param $mois
      * @param $idFrais
@@ -364,6 +364,28 @@ class PdoGsb
         $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unIdFraisForfait', $idFrais, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->fetch();
+    }
+
+    /** Retourne l'état de validation du frais forfait en paramètre par rapport a l'id du visiteur et du mois
+     * @param $idVisiteur
+     * @param $mois
+     * @param $idFraisHF
+     * @return array
+     */
+    public function getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF): array
+    {
+        $requetePrepare = $this->connexion->prepare(
+                'SELECT lignefraishorsforfait.estValide as estValide '
+                . 'FROM lignefraishorsforfait '
+                . 'WHERE lignefraishorsforfait.idutilisateur = :unIdVisiteur '
+                . 'AND lignefraishorsforfait.mois = :unMois '
+                . 'AND lignefraishorsforfait.id = :unIdFraisHorsForfait '
+        );
+        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unIdFraisHorsForfait', $idFraisHF, PDO::PARAM_STR);
         $requetePrepare->execute();
         return $requetePrepare->fetch();
     }
@@ -402,6 +424,33 @@ class PdoGsb
         }
     }
 
+
+    public function majFraisHorsForfait($idVisiteur, $idFraisHF, $mois, $lesFrais): void {
+            $tableauEtat= $this->getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF);
+            if($tableauEtat['estValide']=== 0){
+                $date = Utilitaires::dateFrancaisVersAnglais($lesFrais['date']);
+                $libelle = $lesFrais['libelle'];
+                $montant = $lesFrais['montant'];
+                var_dump($date,$libelle,$montant);
+                $requetePrepare = $this->connexion->prepare(
+                    'UPDATE lignefraishorsforfait '
+                    . 'SET lignefraishorsforfait.libelle = :unLibelle, '
+                    . 'lignefraishorsforfait.date = :uneDate, '
+                    . 'lignefraishorsforfait.montant = :unMontant '
+                    . 'WHERE lignefraishorsforfait.idutilisateur = :unIdVisiteur '
+                    . 'AND lignefraishorsforfait.mois = :unMois '
+                    . 'AND lignefraishorsforfait.id = :unIdFraisHF'
+                );
+                $requetePrepare->bindParam(':unLibelle', $libelle, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':uneDate', $date, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':unMontant', $montant, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unIdFraisHF', $idFraisHF, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
+                $requetePrepare->execute();
+            }
+        }
+
     /**
      * Méthode permettant de valider les frais dans le tableau passé en paramètre
      * @param $idVisiteur
@@ -429,7 +478,28 @@ class PdoGsb
     }
 
     /**
-     * Méthode récupérant les frais forfaits étant valider
+     * Méthode permettant de valider un frais hors forfait a partir de son id
+     * @param $idVisiteur
+     * @param $mois
+     * @param $idFraisHorsForfait
+     * @return void
+     */
+    public function validerFraisHorsForfait($idVisiteur, $mois, $idFraisHorsForfait): void {
+            $requetePrepare = $this->connexion->prepare(
+                    'UPDATE lignefraisforfait '
+                    . 'SET lignefraisforfait.estValide = 1 '
+                    . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
+                    . 'AND lignefraisforfait.mois = :unMois '
+                    . 'AND lignefraisforfait.idfraisforfait = :idFraisHorsForfait'
+            );
+            $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':idFraisHorsForfait', $idFraisHorsForfait, PDO::PARAM_STR);
+            $requetePrepare->execute();
+    }
+
+    /**
+     * Méthode récupérant les frais forfaits étant valide
      * @param $idVisiteur
      * @param $mois
      * @return array
@@ -748,7 +818,8 @@ class PdoGsb
         $requestPrepare = $this->connexion->prepare(
             'select coalesce(sum(montant),0) as cumul from lignefraishorsforfait '
             . "where lignefraishorsforfait.idutilisateur = :unId "
-            . "and lignefraishorsforfait.mois = :unMois ");
+            . "and lignefraishorsforfait.mois = :unMois "
+            . "and lignefraishorsforfait.estValide = 1 ");
         $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
         $requestPrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
         $requestPrepare->execute();
@@ -758,12 +829,13 @@ class PdoGsb
     }
 
     public function getTotauxFicheFraisForfait(int $idVisiteur, int $mois) {
-        $requestPrepare2 = $this->connexion->prepare(
+        $requestPrepare2  = $this->connexion->prepare(
             'select coalesce(sum(lignefraisforfait.quantite * fraisforfait.montant), 0) '
             . 'as cumul '
             . 'from lignefraisforfait, fraisforfait '
             . 'where lignefraisforfait.idfraisforfait = fraisforfait.id '
             . "and lignefraisforfait.idutilisateur = :unId "
+            . "and lignefraisforfait.estValide = 1 "
             . "and lignefraisforfait.mois = :unMois ");
         $requestPrepare2->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
         $requestPrepare2->bindParam(':unMois', $mois, PDO::PARAM_INT);

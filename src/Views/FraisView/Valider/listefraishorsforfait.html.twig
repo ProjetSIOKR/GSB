@@ -15,12 +15,14 @@
             {% set idForm = 1 %}
             {% for unFrais in LesFraisHorsForfait %}
                     <tr>
-                        <td><form id="{{ idForm }}"><input type="text" name="idFrais" data_id="{{unFrais.id}}" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}"/></form></td>
-                        <td><input form="{{ idForm }}" type="text" name="libelle" value="{{unFrais.libelle|e}}"/></td>
-                        <td><input form="{{ idForm }}" type="text" name="montant" value="{{unFrais.montant}}"/></td>
+                        <td><form id="{{ idForm }}"><input type="text" name="idFrais" data_id="{{unFrais.id}}" value="{{unFrais.id}}" hidden/><input type="text" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></form></td>
+                        <td><input form="{{ idForm }}" type="text" name="libelle" value="{{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
+                        <td><input form="{{ idForm }}" type="text" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }}/></td>
                             <td>
+                                {% if etatFiche == 'VA' %}
                                 <span class="btn btn-success btnCorriger">Corriger</span>
                                 <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
+                                {% endif %}
                             </td>
                     </tr>
                 {% set idForm = idForm + 1 %}
@@ -30,11 +32,13 @@
     </div>
     <div>
         <label for="nbJustificatifs">Nombre de justificatifs:</label>
-        <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}">
+        <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}" {{ etatFiche != 'VA' ? 'disabled' : '' }}>
     </div>
     <br>
+    {% if etatFiche == 'VA' %}
     <button class="btn btn-success btnCorriger">Corriger</button>
     <button class="btn btn-danger" type="reset">Réinitialiser</button>
+    {% endif %}
 </div>
 <br>
 <script>

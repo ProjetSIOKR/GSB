@@ -413,7 +413,6 @@ class PdoGsb
         $lesCles = array_keys($lesFrais);
         foreach ($lesCles as $unIdFrais) {
             $idFrais = $lesFrais[$unIdFrais];
-            var_dump($this->getEtatValidationFraisForfait($idVisiteur,$mois,$idFrais));
             $requetePrepare = $this->connexion->prepare(
                     'UPDATE lignefraisforfait '
                     . 'SET lignefraisforfait.estValide = 1 '

@@ -79,7 +79,7 @@ class ValiderFraisController{
         $pdo=PdoGsb::getPdoGsb();
         $lesFrais = json_decode(stripslashes($_POST['tabIdLesFrais']));
         $idVisiteur = Utilitaires::getIdVisiteur();
-        $mois = Utilitaires::getMois(date('d/m/Y'));
+        $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->validerFraisForfait($idVisiteur, $mois, $lesFrais);
         MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
     }

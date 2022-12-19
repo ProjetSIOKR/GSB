@@ -37,6 +37,7 @@
 
 namespace Modeles;
 
+use DateTime;
 use PDO;
 use Outils\Utilitaires;
 
@@ -425,9 +426,28 @@ class PdoGsb
     }
 
 
+    /**
+     * Méthode permettant de supprimer un frais hors forfait
+     * @param $idFraisHF
+     * @return void
+     */
+    public function supprimerFraisHorsForfait($idFraisHF) : void {
+        $requetePrepare = $this->connexion->prepare(
+            'DELETE FROM lignefraishorsforfait '
+            . 'WHERE lignefraishorsforfait.id = :unIdFraisHF '
+        );
+        $requetePrepare->bindParam(':unIdFraisHF', $idFraisHF, PDO::PARAM_STR);
+        $requetePrepare->execute();
+    }
+
     public function majFraisHorsForfait($idVisiteur, $idFraisHF, $mois, $lesFrais): void {
             $tableauEtat= $this->getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF);
-            if($tableauEtat['estValide']=== 0){
+            if($tableauEtat['estValide']=== 1){
+                $dateTab = new DateTime(Utilitaires::dateFrancaisVersAnglais($lesFrais['date']));
+                $dateAjd = new DateTime(Utilitaires::dateFrancaisVersAnglais(date('d/m/Y')));
+                if(($dateAjd->diff($dateTab)->format('%y'))>=1){
+                    $this->supprimerFraisHorsForfait($idFraisHF);
+                }
                 $date = Utilitaires::dateFrancaisVersAnglais($lesFrais['date']);
                 $libelle = $lesFrais['libelle'];
                 $montant = $lesFrais['montant'];
@@ -678,16 +698,17 @@ class PdoGsb
     }
 
     /**
-     * Supprime le frais hors forfait dont l'id est passé en argument
+     * Refuse le frais hors forfait dont l'id est passé en argument
      *
      * @param String $idFrais ID du frais
      *
      * @return null
      */
-    public function supprimerFraisHorsForfait($idFrais): void {
+    public function refuserFraisHorsForfait($idFrais): void {
         $requetePrepare = $this->connexion->prepare(
-                'DELETE FROM lignefraishorsforfait '
-                . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+            'UPDATE lignefraishorsforfait '
+            . 'SET lignefraishorsforfait.estValide = 0 '
+            . 'WHERE lignefraishorsforfait.id = :unIdFrais'
         );
         $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
         $requetePrepare->execute();

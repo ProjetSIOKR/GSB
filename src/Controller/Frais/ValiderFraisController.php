@@ -73,6 +73,15 @@ class ValiderFraisController{
             $pdo->majFraisForfait($idVisiteur, $mois, $lesFrais);
         }
     }
+    #[Route('/corrigerfraishorsforfait', methods: ['POST'],name: 'app_corriger_frais_forfait')]
+    public function corrigerFraisHorsForfait(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $idVisiteur = Utilitaires::getIdVisiteur();
+        $idFrais = filter_input(INPUT_POST,'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $lesFrais = json_decode(stripslashes($_POST['tabFraisHF']),true);
+        $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->majFraisHorsForfait($idVisiteur, $idFrais, $mois, $lesFrais);
+    }
 
     #[Route('/validerlesfraisforfait', methods: ['POST'],name: 'app_valider_frais_forfait')]
     public function validerFraisForfait(): void {

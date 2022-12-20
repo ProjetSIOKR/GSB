@@ -35,15 +35,17 @@
             </tbody>
         </table>
     </div>
-    <div>
-        <label for="nbJustificatifs">Nombre de justificatifs:</label>
-        <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}" {{ etatFiche != 'VA' ? 'disabled' : '' }}>
-    </div>
-    <br>
-    {% if etatFiche == 'VA' %}
-    <button class="btn btn-success btnCorriger">Corriger</button>
-    <button class="btn btn-danger" type="reset">Réinitialiser</button>
-    {% endif %}
+    <form>
+        <div>
+            <label for="nbJustificatifs">Nombre de justificatifs:</label>
+            <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}" {{ etatFiche != 'VA' ? 'disabled' : '' }}>
+        </div>
+        <br>
+        {% if etatFiche == 'VA' %}
+        <span class="btn btn-success btnJustificatifs">Corriger</span>
+        <button class="btn btn-danger" type="reset">Réinitialiser</button>
+        {% endif %}
+    </form>
 </div>
 <br>
 <script>
@@ -74,8 +76,7 @@
                 'mois':leMois,
                 'tabFraisHF':jsonlesFraisHF
             },
-            success:function(result){
-                detailsFrais.append();
+            success:function(){
                 alert('les modifications ont bien été prises en compte');
                 window.location.reload();
             }
@@ -87,14 +88,12 @@
         td = parents.children('td');
         inputId = td.find('#idFraisHF');
         id=inputId.attr('data_id');
-        let detailsFrais = $('#detailsFrais').children('div');
         $.ajax({
             url: "/validerfraishorsforfait",
             type: 'POST',
             data:{'idFrais':id,
             },
-            success:function(result){
-                detailsFrais.append(result);
+            success:function(){
                 alert('le frais a bien été validé');
                 window.location.reload();
             }
@@ -128,7 +127,6 @@
         leMois = $('#lstMois option:selected').text();
         leMoisSansEspace = leMois.replace(/\s/g, '');
         laDate = ('01/'+leMoisSansEspace);
-        let detailsFrais = $('#detailsFrais').children('div');
         $.ajax({
             url: "/reporterfraishorsforfait",
             type: 'POST',
@@ -139,6 +137,44 @@
             success:function(){
                 alert('le Frais a été reporté au moins prochain');
                 window.location.reload();
+            }
+        });
+    });
+    $('.btnReporter').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        inputDate = td.find('#dateFraisHF');
+        id=inputId.attr('data_id');
+        date= inputDate.val()!='' ? inputDate.val() : inputDate.attr('value');
+        leMois = $('#lstMois option:selected').text();
+        leMoisSansEspace = leMois.replace(/\s/g, '');
+        laDate = ('01/'+leMoisSansEspace);
+        $.ajax({
+            url: "/reporterfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+                'date':laDate,
+                'dateFrais':date,
+            },
+            success:function(){
+                alert('le Frais a été reporté au moins prochain');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnJustificatifs').click(function(){
+        leMois = $('#lstMois option:selected').val();
+        valeurJustificatifs = $('#nbJustificatifs').val()!=='' ? $('#nbJustificatifs').val() : $('#nbJustificatifs') .attr('value');
+        $.ajax({
+            url: "/corrigernbjustificatifs",
+            type: 'POST',
+            data:{'mois':leMois,
+                'valeurJustificatifs':valeurJustificatifs,
+            },
+            success:function(){
+                alert('le nombre de justificatifs a bien été modifié');
             }
         });
     });

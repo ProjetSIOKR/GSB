@@ -951,5 +951,25 @@ class PdoGsb
         return $requestPrepare->fetch();
     }
 
+    /**
+     * Corrige le nombre de justificatifs par rapport a un idVisiteur et mois
+     * @param $idVisiteur
+     * @param $mois
+     * @param $valeur
+     * @return void
+     */
+    public function  corrigerNbJustificatifs($idVisiteur,$mois,$valeur): void {
+        $requetePrepare = $this->connexion->prepare(
+            'UPDATE fichefrais '
+            . 'SET nbjustificatifs = :uneValeur '
+            . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
+            . 'AND fichefrais.mois = :unMois'
+        );
+        $requetePrepare->bindParam(':uneValeur', $valeur, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
+        $requetePrepare->execute();
+    }
+
 
 }

@@ -112,6 +112,15 @@ class ValiderFraisController{
 
     }
 
+    #[Route('/corrigernbjustificatifs', methods: ['POST'],name: 'app_corriger_nbjustificatifs')]
+    public function corrigernbjustificatifs(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $idVisiteur = Utilitaires::getIdVisiteur();
+        $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $valeur= filter_input(INPUT_POST,'valeurJustificatifs', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->corrigerNbJustificatifs($idVisiteur, $mois, $valeur);
+    }
+
     #[Route('/validerlesfraisforfait', methods: ['POST'],name: 'app_valider_frais_forfait')]
     public function validerFraisForfait(): void {
         $pdo=PdoGsb::getPdoGsb();

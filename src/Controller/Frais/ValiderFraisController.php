@@ -108,8 +108,6 @@ class ValiderFraisController{
         $date= filter_input(INPUT_POST,'date', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $dateFrais = filter_input(INPUT_POST,'dateFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->reporterFraisHorsForfait($idFrais,$idVisiteur,$date,$dateFrais);
-        MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
-
     }
 
     #[Route('/corrigernbjustificatifs', methods: ['POST'],name: 'app_corriger_nbjustificatifs')]
@@ -128,6 +126,13 @@ class ValiderFraisController{
         $idVisiteur = Utilitaires::getIdVisiteur();
         $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->validerFraisForfait($idVisiteur, $mois, $lesFrais);
+    }
+    #[Route('/validerflafichefrais', methods: ['POST'],name: 'app_valider_la_fiche_frais')]
+    public function validerLaFicheFrais(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $idVisiteur = Utilitaires::getIdVisiteur();
+        $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->validerFicheFrais($idVisiteur, $mois);
     }
 
 }

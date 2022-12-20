@@ -15,11 +15,11 @@
                                    size="10" maxlenght="5"
                                    value="{{ frais.quantite }}"
                                    class="form-control lesInputs"
-                                   {{ etatFiche != 'VA' ? 'disabled' : '' }}
+                                   {{ etatFiche != 'CL' ? 'disabled' : '' }}
                                    {{ frais.estValide == 1 ? 'disabled' : '' }}>
                         </div>
                 {% endfor %}
-                {% if etatFiche == 'VA' %}
+                {% if etatFiche == 'CL' %}
                     {% if lesFraisForfaitValide|length != 4 %}
                     <span class="btn btn-success" id="validerFrais" data-click="{{ nbClick }}" style="display: none">Valider frais sélectionnés</span>
                     <br/>

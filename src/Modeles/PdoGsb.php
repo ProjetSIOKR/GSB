@@ -521,16 +521,19 @@ class PdoGsb
      * @return void
      */
     public function validerFicheFrais($idVisiteur,$mois): void {
-        $requetePrepare = $this->connexion->prepare(
-            'UPDATE fichefrais '
-            . 'SET fichefrais.datemodif = CAST(now() AS DATE) '
-            . 'SET fichefrais.idetat = VA '
-            . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
-            . 'AND fichefrais.mois = :unMois '
-        );
-        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
-        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
-        $requetePrepare->execute();
+        $lesInfos = $this->getLesInfosFicheFrais($idVisiteur, $mois);
+        if(($lesInfos['idEtat']!="VA") || ($lesInfos['idEtat']!="CR") || ($lesInfos['idEtat']!="RB") || ($lesInfos['idEtat']!="MP")){
+            $requetePrepare = $this->connexion->prepare(
+                'UPDATE fichefrais '
+                . 'SET fichefrais.datemodif = CAST(now() AS DATE), '
+                . 'fichefrais.idetat = "VA" '
+                . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
+                . 'AND fichefrais.mois = :unMois '
+            );
+            $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+            $requetePrepare->execute();
+        }
     }
 
     /**

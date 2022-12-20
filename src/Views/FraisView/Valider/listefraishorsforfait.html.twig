@@ -15,11 +15,11 @@
             {% set idForm = 1 %}
             {% for unFrais in LesFraisHorsForfait %}
                     <tr id="lesFraisHF">
-                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></form></td>
-                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{ (unFrais.estValide is same as 0) ? 'REFUSER' : '' }} {{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }} /></td>
-                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></td>
+                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'CL' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></form></td>
+                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{ (unFrais.estValide is same as 0) ? 'REFUSER' : '' }} {{unFrais.libelle|e}}" {{ etatFiche != 'CL' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }} /></td>
+                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'CL' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></td>
                         <td>
-                            {% if etatFiche == 'VA' %}
+                            {% if etatFiche == 'CL' %}
                                 {% if (unFrais.estValide is null) %}
                                     <span class="btn btn-success btnCorriger">Corriger</span>
                                     <span class="btn btn-success btnValider">Valider</span>
@@ -38,10 +38,10 @@
     <form>
         <div>
             <label for="nbJustificatifs">Nombre de justificatifs:</label>
-            <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}" {{ etatFiche != 'VA' ? 'disabled' : '' }}>
+            <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}" {{ etatFiche != 'CL' ? 'disabled' : '' }}>
         </div>
         <br>
-        {% if etatFiche == 'VA' %}
+        {% if etatFiche == 'CL' %}
         <span class="btn btn-success btnJustificatifs">Corriger</span>
         <button class="btn btn-danger" type="reset">Réinitialiser</button>
         {% endif %}

@@ -81,14 +81,35 @@ class ValiderFraisController{
         $lesFrais = json_decode(stripslashes($_POST['tabFraisHF']),true);
         $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pdo->majFraisHorsForfait($idVisiteur, $idFrais, $mois, $lesFrais);
-        MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
     }
 
     #[Route('/refuserfraishorsforfait', methods: ['POST'],name: 'app_refuser_frais_hors_forfait')]
     public function refuserFraisHorsForfait(): void {
         $pdo=PdoGsb::getPdoGsb();
+        $idVisiteur = Utilitaires::getIdVisiteur();
         $idFrais = filter_input(INPUT_POST,'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $pdo->refuserFraisHorsForfait($idFrais);
+        $lesFrais = json_decode(stripslashes($_POST['tabFraisHF']),true);
+        $mois= filter_input(INPUT_POST,'mois', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->refuserFraisHorsForfait($idVisiteur, $idFrais, $mois, $lesFrais);
+    }
+
+    #[Route('/validerfraishorsforfait', methods: ['POST'],name: 'app_valider_frais_hors_forfait')]
+    public function validerFraisHorsForfait(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $idFrais = filter_input(INPUT_POST,'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->validerFraisHorsForfait($idFrais);
+    }
+
+    #[Route('/reporterfraishorsforfait', methods: ['POST'],name: 'app_reporter_frais_hors_forfait')]
+    public function reporterFraisHorsForfait(): void {
+        $pdo=PdoGsb::getPdoGsb();
+        $idFrais = filter_input(INPUT_POST,'idFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $idVisiteur = Utilitaires::getIdVisiteur();
+        $date= filter_input(INPUT_POST,'date', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $dateFrais = filter_input(INPUT_POST,'dateFrais', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pdo->reporterFraisHorsForfait($idFrais,$idVisiteur,$date,$dateFrais);
+        MyTwig::afficheVue('FraisView/Valider/frais.html.twig');
+
     }
 
     #[Route('/validerlesfraisforfait', methods: ['POST'],name: 'app_valider_frais_forfait')]

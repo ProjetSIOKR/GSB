@@ -375,17 +375,13 @@ class PdoGsb
      * @param $idFraisHF
      * @return array
      */
-    public function getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF): array
+    public function getEtatValidationFraisHorsForfait($idFraisHF): array
     {
         $requetePrepare = $this->connexion->prepare(
                 'SELECT lignefraishorsforfait.estValide as estValide '
                 . 'FROM lignefraishorsforfait '
-                . 'WHERE lignefraishorsforfait.idutilisateur = :unIdVisiteur '
-                . 'AND lignefraishorsforfait.mois = :unMois '
-                . 'AND lignefraishorsforfait.id = :unIdFraisHorsForfait '
+                . 'WHERE lignefraishorsforfait.id = :unIdFraisHorsForfait '
         );
-        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
-        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unIdFraisHorsForfait', $idFraisHF, PDO::PARAM_STR);
         $requetePrepare->execute();
         return $requetePrepare->fetch();
@@ -447,11 +443,11 @@ class PdoGsb
                 $dateAjd = new DateTime(Utilitaires::dateFrancaisVersAnglais(date('d/m/Y')));
                 if(($dateAjd->diff($dateTab)->format('%y'))>=1){
                     $this->supprimerFraisHorsForfait($idFraisHF);
+                    Utilitaires::ajouterErreur("Le frais hors forfait date d'y a plus d'un an, il a donc été supprimé");
                 }
                 $date = Utilitaires::dateFrancaisVersAnglais($lesFrais['date']);
                 $libelle = $lesFrais['libelle'];
                 $montant = $lesFrais['montant'];
-                var_dump($date,$libelle,$montant);
                 $requetePrepare = $this->connexion->prepare(
                     'UPDATE lignefraishorsforfait '
                     . 'SET lignefraishorsforfait.libelle = :unLibelle, '
@@ -495,27 +491,6 @@ class PdoGsb
             $requetePrepare->execute();
 
         }
-    }
-
-    /**
-     * Méthode permettant de valider un frais hors forfait a partir de son id
-     * @param $idVisiteur
-     * @param $mois
-     * @param $idFraisHorsForfait
-     * @return void
-     */
-    public function validerFraisHorsForfait($idVisiteur, $mois, $idFraisHorsForfait): void {
-            $requetePrepare = $this->connexion->prepare(
-                    'UPDATE lignefraisforfait '
-                    . 'SET lignefraisforfait.estValide = 1 '
-                    . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
-                    . 'AND lignefraisforfait.mois = :unMois '
-                    . 'AND lignefraisforfait.idfraisforfait = :idFraisHorsForfait'
-            );
-            $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
-            $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
-            $requetePrepare->bindParam(':idFraisHorsForfait', $idFraisHorsForfait, PDO::PARAM_STR);
-            $requetePrepare->execute();
     }
 
     /**
@@ -705,13 +680,33 @@ class PdoGsb
      * @return null
      */
     public function refuserFraisHorsForfait($idFrais): void {
-        $requetePrepare = $this->connexion->prepare(
-            'UPDATE lignefraishorsforfait '
-            . 'SET lignefraishorsforfait.estValide = 0 '
-            . 'WHERE lignefraishorsforfait.id = :unIdFrais'
-        );
-        $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
-        $requetePrepare->execute();
+        if($this->getEtatValidationFraisHorsForfait($idFrais)==null){
+            $requetePrepare = $this->connexion->prepare(
+                'UPDATE lignefraishorsforfait '
+                . 'SET lignefraishorsforfait.estValide = 0 '
+                . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+            );
+            $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
+            $requetePrepare->execute();
+        }
+    }
+
+    /**
+     * Valide le frais hors forfait dont l'id est passé en argument
+     * @param $idFrais
+     * @return void
+     */
+    public function validerFraisHorsForfait($idFrais): void {
+        $etatFrais = $this->getEtatValidationFraisHorsForfait($idFrais);
+        if($etatFrais['estValide']==null){
+            $requetePrepare = $this->connexion->prepare(
+                'UPDATE lignefraishorsforfait '
+                . 'SET lignefraishorsforfait.estValide = 1 '
+                . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+            );
+            $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
+            $requetePrepare->execute();
+        }
     }
 
     /**
@@ -735,6 +730,45 @@ class PdoGsb
         $requetePrepare->bindParam(':uneDateFr', $dateFr, PDO::PARAM_STR);
         $requetePrepare->bindParam(':unMontant', $montant, PDO::PARAM_INT);
         $requetePrepare->execute();
+    }
+
+    /**
+     * Reporte un frais hors forfait qui n'a pas été validé ni refusé au mois suivant
+     * @param $idFraisHF
+     * @param $idVisiteur
+     * @param $date
+     * @param $dateFrais
+     * @return void
+     * @throws \Exception
+     */
+    public function reporterFraisHorsForfait($idFraisHF,$idVisiteur,$date,$dateFrais): void
+    {
+        $mois = Utilitaires::getMois($date);
+        $tableauEtat= $this->getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF);
+        if(($tableauEtat['estValide'] == null)){
+            $dateConverti = Utilitaires::dateFrancaisVersAnglais($date);
+            $nouvelleDate = date('d/m/Y',strtotime( '+ 1 months',strtotime($dateConverti)));
+            $moisSuivant = Utilitaires::getMois($nouvelleDate);
+            $ficheMoisSuivant = $this->getLesInfosFicheFrais($idVisiteur, $moisSuivant);
+            if (!$ficheMoisSuivant){
+                $this->creeNouvellesLignesFrais($idVisiteur,$moisSuivant);
+            }
+            $dateFrais = new DateTime(Utilitaires::dateFrancaisVersAnglais($dateFrais));
+            $dateAjd = new DateTime(Utilitaires::dateFrancaisVersAnglais(date('d/m/Y')));
+            if(($dateAjd->diff($dateFrais)->format('%y'))>=1){
+                $this->supprimerFraisHorsForfait($idFraisHF);
+                Utilitaires::ajouterErreur("Le frais hors forfait date d'y a plus d'un an, il a donc été supprimé");
+            }else{
+                $requetePrepare = $this->connexion->prepare(
+                    'UPDATE lignefraishorsforfait '
+                    . 'SET mois = :unMois '
+                    . 'WHERE lignefraishorsforfait.id = :unIdFrais '
+                );
+                $requetePrepare->bindParam(':unIdFrais', $idFraisHF, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unMois', $moisSuivant, PDO::PARAM_INT);
+                $requetePrepare->execute();
+            }
+        }
     }
 
 

@@ -184,11 +184,11 @@ abstract class Utilitaires {
 
     /**
      *Retourne les mois sur 1 an a partir de la date du jour au format aaaamm
-     * @param $date
+     *
      *
      * @return array
      */
-    public static function getTableauDate($date) : array {
+    public static function getTableauDate() : array {
         $tabDateFormat = [];
         for ($i=0; $i<= 12 ; $i++){
            $nouvelleDate = date('d/m/Y',strtotime('- '.$i.' months'));

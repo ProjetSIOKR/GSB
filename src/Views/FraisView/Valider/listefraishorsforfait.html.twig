@@ -15,16 +15,17 @@
             {% set idForm = 1 %}
             {% for unFrais in LesFraisHorsForfait %}
                     <tr id="lesFraisHF">
-                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ unFrais.estValide == 0 ? 'disabled' : '' }}/></form></td>
-                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{ unFrais.estValide == 0 ? 'REFUSER' : '' }} {{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ unFrais.estValide == 0 ? 'disabled' : '' }} /></td>
-                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ unFrais.estValide == 0 ? 'disabled' : '' }}/></td>
+                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></form></td>
+                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{ (unFrais.estValide is same as 0) ? 'REFUSER' : '' }} {{unFrais.libelle|e}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }} /></td>
+                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'VA' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></td>
                         <td>
                             {% if etatFiche == 'VA' %}
-                                {% if unFrais.estValide != 0 %}
-                                <span class="btn btn-success btnCorriger">Corriger</span>
-                                <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
-                                <span class="btn btn-danger btnReporter">Reporter</span>
-                                <span class="btn btn-danger btnRefuser">Refuser</span>
+                                {% if (unFrais.estValide is null) %}
+                                    <span class="btn btn-success btnCorriger">Corriger</span>
+                                    <span class="btn btn-success btnValider">Valider</span>
+                                    <span class="btn btn-danger btnReporter">Reporter</span>
+                                    <span class="btn btn-danger btnRefuser">Refuser</span>
+                                    <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
                                 {% endif %}
                             {% endif %}
                         </td>
@@ -66,7 +67,6 @@
         objFraisHF['libelle']=libelle;
         objFraisHF['montant']=montant;
         jsonlesFraisHF= JSON.stringify(objFraisHF);
-        let detailsFrais = $('#detailsFrais').children('div');
         $.ajax({
             url: "/corrigerfraishorsforfait",
             type: 'POST',
@@ -77,6 +77,25 @@
             success:function(result){
                 detailsFrais.append();
                 alert('les modifications ont bien été prises en compte');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnValider').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        id=inputId.attr('data_id');
+        let detailsFrais = $('#detailsFrais').children('div');
+        $.ajax({
+            url: "/validerfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+            },
+            success:function(result){
+                detailsFrais.append(result);
+                alert('le frais a bien été validé');
                 window.location.reload();
             }
         });
@@ -98,5 +117,29 @@
             }
         });
     });
-
+    $('.btnReporter').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        inputDate = td.find('#dateFraisHF');
+        id=inputId.attr('data_id');
+        date= inputDate.val()!='' ? inputDate.val() : inputDate.attr('value');
+        leMois = $('#lstMois option:selected').text();
+        leMoisSansEspace = leMois.replace(/\s/g, '');
+        laDate = ('01/'+leMoisSansEspace);
+        let detailsFrais = $('#detailsFrais').children('div');
+        $.ajax({
+            url: "/reporterfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+                'date':laDate,
+                'dateFrais':date,
+            },
+            success:function(){
+                alert('le Frais a été reporté au moins prochain');
+                window.location.reload();
+            }
+        });
+    });
 </script>

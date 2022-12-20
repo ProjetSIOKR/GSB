@@ -1,0 +1,13 @@
+{% extends "layout.html.twig" %}
+{% block entete %}
+    {% include "AppView/entete.html.twig" %}
+{% endblock %}
+{% block contenu %}
+    <div class="alert alert-info" role="alert">
+        <p>Vous avez bien été déconnecté ! <a href="/">Cliquez ici</a>
+            pour revenir à la page de connexion.</p>
+    </div>
+{% endblock %}
+{% block javascript %}
+    {% include "AppView/redirection.html.twig" %}
+{% endblock %}

@@ -1,0 +1,121 @@
+{% if connecte %}
+        <div class="header">
+            <div class="row vertical-align">
+                <div class="col-md-4">
+                    <h1>
+                        <img src="/images/logo.jpg" class="img-responsive"
+                             alt="Laboratoire Galaxy-Swiss Bourdin"
+                             title="Laboratoire Galaxy-Swiss Bourdin">
+                    </h1>
+                </div>
+                {% if role == 1 %}
+                    <style>
+                        .nav-pills > li.comptableColor > a{
+                            color: orange!important;
+                            text-decoration: none;
+                        }
+                        .nav-pills > li.comptableColor > a:hover, .nav-pills > li.comptableColor > a:focus{
+                            color: orange!important;
+                            background-color: #eee;
+                        }
+                        .comptableActive>a,.comptableActive>a:hover,.comptableActive>a:focus{
+                            color: white!important;
+                            background-color: orange!important;
+                        }
+                        .orange{
+                            color: orange;
+                        }
+                        .panel-orange{
+                            border-color: orange;
+                        }
+                        .panel-orange>.panel-heading{
+                            color: white!important;
+                            background-color: orange!important;
+                            border-color: orange!important;
+                        }
+                        .panel-orange>.panel-heading>th{
+                            border-color: orange;
+                        }
+                        .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+                            border: 1px solid orange;
+                        }
+
+                        .thead-orange{
+                            background-color: orange;
+                            color: white;
+                        }
+                        .pagination > .active > a{
+                            background-color: orange!important;
+                            border-color: orange!important;
+                            color: white!important;
+                        }
+                        .pagination > li > a{
+                            color: orange!important;
+                        }
+                    </style>
+                    <div class="col-md-8">
+                        <ul class="nav nav-pills pull-right" role="tablist">
+                            <li {% if uri=='/accueil' %} class="comptableActive" {% else%} class="comptableColor" {% endif%}>
+                                <a href="/accueil">
+                                    Accueil
+                                </a>
+                            </li>
+                            <li {% if uri=='/validerfichefrais'%} class="comptableActive"{% endif%} class="comptableColor">
+                                <a href="/validerfichefrais">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    Valider fiche de frais
+                                </a>
+                            </li>
+                            <li {% if uri=='/suivipaiement'%} class="comptableActive"{% endif%}class="comptableColor">
+                                <a href="/suivipaiement">
+                                    <span class="glyphicon glyphicon-eur"></span>
+                                    Suivre le paiement
+                                </a>
+                            </li>
+                            <li class="comptableColor">
+                                <a href="/deconnexion">
+                                    Déconnexion
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                 {% else %}
+                     <div class="col-md-8">
+                         <ul class="nav nav-pills pull-right" role="tablist">
+                             <li {% if uri=='/accueil'%} class="active"{% endif%}>
+                                 <a href="/accueil">
+                                     <span class="glyphicon glyphicon-home"></span>
+                                     Accueil
+                                 </a>
+                             </li>
+                             <li {% if uri=='/gererfrais'%} class="active"{% endif%}>
+                                 <a href="/gererfrais">
+                                     <span class="glyphicon glyphicon-pencil"></span>
+                                     Renseigner la fiche de frais
+                                 </a>
+                             </li>
+                             <li {% if (uri=='/etatfrais' or uri=='/voiretatfrais')%} class="active"{% endif%}>
+                                 <a href="/etatfrais">
+                                     <span class="glyphicon glyphicon-list-alt"></span>
+                                     Afficher mes fiches de frais
+                                 </a>
+                             </li>
+                             <li>
+                                 <a href="/deconnexion">
+                                     <span class="glyphicon glyphicon-log-out"></span>
+                                     Déconnexion
+                                 </a>
+                             </li>
+                         </ul>
+                     </div>
+                {% endif %}
+            </div>
+        </div>
+     {% else %}
+         <h1>
+             <img src="/images/logo.jpg"
+                  class="img-responsive center-block"
+                  alt="Laboratoire Galaxy-Swiss Bourdin"
+                  title="Laboratoire Galaxy-Swiss Bourdin">
+         </h1>
+{% endif %}

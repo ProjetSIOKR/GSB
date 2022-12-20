@@ -1,0 +1,7 @@
+{% if erreurs %}
+       <div class="alert alert-danger" role="alert">
+           {% for erreur in erreurs %}
+              <p> {{ erreur|e }} </p>
+           {% endfor %}
+       </div>
+{% endif %}

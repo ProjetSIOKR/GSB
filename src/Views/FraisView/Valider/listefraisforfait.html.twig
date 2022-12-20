@@ -1,0 +1,93 @@
+<div class="row">
+    <div class="col-md-4">
+        <form method="post"
+              id="formFrais"
+              role="form">
+            <fieldset id="detailsFrais">
+                {% for frais in lesFrais %}
+                        <div class="form-group">
+                            {% if frais.estValide == 0 %}
+                                <input class="btnselect" type="checkbox" name="{{ frais.idfrais }}">
+                            {% endif %}
+                            <label for ="{{ frais.idfrais }}">{{ frais.libelle|e }}</label>
+                            <input type="text" id="lesFrais"
+                                   data_id="{{ frais.idfrais }}"
+                                   size="10" maxlenght="5"
+                                   value="{{ frais.quantite }}"
+                                   class="form-control lesInputs"
+                                   {{ etatFiche != 'CL' ? 'disabled' : '' }}
+                                   {{ frais.estValide == 1 ? 'disabled' : '' }}>
+                        </div>
+                {% endfor %}
+                {% if etatFiche == 'CL' %}
+                    {% if lesFraisForfaitValide|length != 4 %}
+                    <span class="btn btn-success" id="validerFrais" data-click="{{ nbClick }}" style="display: none">Valider frais sélectionnés</span>
+                    <br/>
+                    <span class="btn btn-success" id="corrigerFrais">Corriger</span>
+                    <button class="btn btn-danger" type="reset">Réinitialiser</button>
+                    {% endif %}
+                {% endif %}
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+    });
+    {{ frais.estValide == 1 ? 'document.querySelector(".btnselect").style.display = "none"' : '' }}
+    $('#corrigerFrais').click(function(){
+        let lesFrais= {};
+        let detailsFrais = $('#detailsFrais').children('div');
+        detailsFrais.each(function(){
+            let inputFrais = $(this).children('.lesInputs');
+            let idFrais = inputFrais.attr('data_id');
+            let valeurFrais = inputFrais.val();
+            lesFrais[idFrais]=valeurFrais;
+        });
+        let jsonLesFrais = JSON.stringify(lesFrais);
+        $.ajax({
+            url: "/corrigerfraisforfait",
+            type: 'POST',
+            data:{'tabLesFrais': jsonLesFrais
+            },
+            success:function(){
+                alert('Les modifications ont bien été prises en compte !');
+            }
+        });
+    });
+    lesFraisAValider = [];
+    $('.btnselect').click(function(){
+        let id = $(this).attr('name');
+        let fraisId;
+        if ($(this).is(':checked')){
+            document.querySelector("#validerFrais").style.display = "block";
+            lesFraisAValider.push(id);
+            document.querySelector('#validerFrais').setAttribute('data-click', lesFraisAValider.length);
+        }else{
+            fraisId=lesFraisAValider.indexOf(id);
+            lesFraisAValider.splice(fraisId,1);
+            document.querySelector('#validerFrais').setAttribute('data-click', lesFraisAValider.length);
+            if(lesFraisAValider.length === 0){
+                document.querySelector("#validerFrais").style.display = "none"
+            }
+        }
+    });
+    $('#validerFrais').click(function(){
+        if(lesFraisAValider.length > 0){
+            let jsonLesFraisAValider = JSON.stringify(lesFraisAValider);
+            leMois = $('#lstMois option:selected').val();
+            $.ajax({
+                url: "/validerlesfraisforfait",
+                type: 'POST',
+                data:{'tabIdLesFrais': jsonLesFraisAValider,
+                    'mois': leMois
+                },
+                success:function(){
+                    alert('Les frais sélectionnés ont été validés !');
+                    window.location.reload();
+                }
+            });
+        }
+    });
+
+</script>

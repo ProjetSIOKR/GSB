@@ -1,0 +1,24 @@
+{% include "AppView/erreurs.html.twig" %}
+{% if (lesFrais and LesFraisHorsForfait) or (lesFrais or LesFraisHorsForfait) %}
+    {% include "FraisView/Valider/listefraisforfait.html.twig" %}
+    {% include "FraisView/Valider/listefraishorsforfait.html.twig" %}
+    <span class="btn btn-success" id="validerFicheFrais" style="display: block">Valider Fiche Frais</span>
+    <br>
+    <script>
+        $(document).ready(function() {
+        });
+        $('#validerFicheFrais').click(function(){
+            leMois = $('#lstMois option:selected').val();
+            $.ajax({
+                url: "/validerflafichefrais",
+                type: 'POST',
+                data:{'mois':leMois,
+                },
+                success:function(result){
+                    console.log(result);
+                    alert('le fiche frais a été validée');
+                }
+            });
+        });
+    </script>
+{% endif %}

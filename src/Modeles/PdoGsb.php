@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Classe d'accès aux données.
  *
@@ -38,6 +37,7 @@
 
 namespace Modeles;
 
+use DateTime;
 use PDO;
 use Outils\Utilitaires;
 
@@ -115,9 +115,9 @@ class PdoGsb
     {
         $requetePrepare = $this->connexion->prepare(
                 'SELECT utilisateur.id AS id, utilisateur.nom AS nom, '
-                . 'utilisateur.prenom AS prenom, utilisateur.mdp AS mdp '
+                . 'utilisateur.prenom AS prenom '
                 . 'FROM utilisateur '
-                . 'WHERE id_role=0'
+                . 'WHERE id_role=0 '
         );
         $requetePrepare->execute();
         return $requetePrepare->fetchAll();
@@ -141,7 +141,6 @@ class PdoGsb
                 . 'FROM securisationconnexion '
                 . 'WHERE securisationconnexion.id = :unId'
         );
-        // INSERT INTO securisationconnexion (id) SELECT utilisateur.id FROM utilisateur;
         $requetePrepare->bindParam(':unId', $id, PDO::PARAM_INT);
         $requetePrepare->execute();
         return $requetePrepare->fetch();
@@ -162,7 +161,7 @@ class PdoGsb
      public function updateTentativeMDP($id) {
         $requetePrepare = $this->connexion->prepare(
                 'UPDATE securisationconnexion '
-                . 'SET tentative_mdp_id = tentative_mdp_id+1, date = NOW() '
+                . 'SET tentative_mdp_id = tentative_mdp_id+1 '
                 . 'WHERE securisationconnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -174,7 +173,7 @@ class PdoGsb
      public function updateTentativeCodeA2f($id) {
         $requetePrepare = $this->connexion->prepare(
                 'UPDATE securisationconnexion '
-                . 'SET tentative_a2f = tentative_a2f+1, date = NOW() '
+                . 'SET tentative_a2f = tentative_a2f+1 '
                 . 'WHERE securisationconnexion.id = :unIdUtilisateur'
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -184,8 +183,8 @@ class PdoGsb
     // Méthode pour insert
      public function insertTentativeMDP($id) {
                  $requetePrepare = $this->connexion->prepare(
-                'INSERT INTO securisationconnexion (id,tentative_mdp_id,date)'
-                . 'VALUES (:unIdUtilisateur,1, NOW())'
+                'INSERT INTO securisationconnexion (id,tentative_mdp_id)'
+                . 'VALUES (:unIdUtilisateur,1)'
         );
           //$requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unIdUtilisateur', $id, PDO::PARAM_STR);
@@ -209,7 +208,7 @@ class PdoGsb
            $requetePrepare = $this->connexion->prepare(
                  /*AND tentative_mdp_id = 5 OR tentative_a2f = 5'*/
                    'UPDATE securisationconnexion SET securisationconnexion.tentative_mdp_id = 0, '
-                   . 'securisationconnexion.tentative_a2f = 0, securisationconnexion.bloque = 0, securisationconnexion.date = null '
+                   . 'securisationconnexion.tentative_a2f = 0, securisationconnexion.bloque = 0 '
                    . 'WHERE securisationconnexion.id = :unIdUtilisateur '
         );
          // $requetePrepare->bindParam(':tentative', $tentative, PDO::PARAM_INT);
@@ -316,7 +315,8 @@ class PdoGsb
         $requetePrepare = $this->connexion->prepare(
                 'SELECT fraisforfait.id as idfrais, '
                 . 'fraisforfait.libelle as libelle, '
-                . 'lignefraisforfait.quantite as quantite '
+                . 'lignefraisforfait.quantite as quantite, '
+                . 'lignefraisforfait.estValide as estValide '
                 . 'FROM lignefraisforfait '
                 . 'INNER JOIN fraisforfait '
                 . 'ON fraisforfait.id = lignefraisforfait.idfraisforfait '
@@ -347,6 +347,47 @@ class PdoGsb
     }
 
     /**
+     * Retourne l'état de validation du frais forfait en paramètre par rapport a l'id du visiteur et du mois
+     * @param $idVisiteur
+     * @param $mois
+     * @param $idFrais
+     * @return array
+     */
+    public function getEtatValidationFraisForfait($idVisiteur,$mois,$idFrais): array
+    {
+        $requetePrepare = $this->connexion->prepare(
+                'SELECT lignefraisforfait.estValide as estValide '
+                . 'FROM lignefraisforfait '
+                . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
+                . 'AND lignefraisforfait.mois = :unMois '
+                . 'AND lignefraisforfait.idfraisforfait = :unIdFraisForfait '
+        );
+        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unIdFraisForfait', $idFrais, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->fetch();
+    }
+
+    /** Retourne l'état de validation du frais forfait en paramètre par rapport a l'id du visiteur et du mois
+     * @param $idVisiteur
+     * @param $mois
+     * @param $idFraisHF
+     * @return array
+     */
+    public function getEtatValidationFraisHorsForfait($idFraisHF): array
+    {
+        $requetePrepare = $this->connexion->prepare(
+                'SELECT lignefraishorsforfait.estValide as estValide '
+                . 'FROM lignefraishorsforfait '
+                . 'WHERE lignefraishorsforfait.id = :unIdFraisHorsForfait '
+        );
+        $requetePrepare->bindParam(':unIdFraisHorsForfait', $idFraisHF, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->fetch();
+    }
+
+    /**
      * Met à jour la table ligneFraisForfait
      * Met à jour la table ligneFraisForfait pour un visiteur et
      * un mois donné en enregistrant les nouveaux montants
@@ -361,18 +402,136 @@ class PdoGsb
     public function majFraisForfait($idVisiteur, $mois, $lesFrais): void {
         $lesCles = array_keys($lesFrais);
         foreach ($lesCles as $unIdFrais) {
-            $qte = $lesFrais[$unIdFrais];
-            $requetePrepare = $this->connexion->prepare(
+            $tableauEtat= $this->getEtatValidationFraisForfait($idVisiteur,$mois,$unIdFrais);
+            if($tableauEtat['estValide']=== 0){
+                $qte = $lesFrais[$unIdFrais];
+                $requetePrepare = $this->connexion->prepare(
                     'UPDATE lignefraisforfait '
                     . 'SET lignefraisforfait.quantite = :uneQte '
                     . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
                     . 'AND lignefraisforfait.mois = :unMois '
                     . 'AND lignefraisforfait.idfraisforfait = :idFrais'
+                );
+                $requetePrepare->bindParam(':uneQte', $qte, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':idFrais', $unIdFrais, PDO::PARAM_STR);
+                $requetePrepare->execute();
+            }
+        }
+    }
+
+
+    /**
+     * Méthode permettant de supprimer un frais hors forfait
+     * @param $idFraisHF
+     * @return void
+     */
+    public function supprimerFraisHorsForfait($idFraisHF) : void {
+        $requetePrepare = $this->connexion->prepare(
+            'DELETE FROM lignefraishorsforfait '
+            . 'WHERE lignefraishorsforfait.id = :unIdFraisHF '
+        );
+        $requetePrepare->bindParam(':unIdFraisHF', $idFraisHF, PDO::PARAM_STR);
+        $requetePrepare->execute();
+    }
+
+    public function majFraisHorsForfait($idVisiteur, $idFraisHF, $mois, $lesFrais): void {
+            $tableauEtat= $this->getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF);
+            if($tableauEtat['estValide']=== 1){
+                $dateTab = new DateTime(Utilitaires::dateFrancaisVersAnglais($lesFrais['date']));
+                $dateAjd = new DateTime(Utilitaires::dateFrancaisVersAnglais(date('d/m/Y')));
+                if(($dateAjd->diff($dateTab)->format('%y'))>=1){
+                    $this->supprimerFraisHorsForfait($idFraisHF);
+                    Utilitaires::ajouterErreur("Le frais hors forfait date d'y a plus d'un an, il a donc été supprimé");
+                }
+                $date = Utilitaires::dateFrancaisVersAnglais($lesFrais['date']);
+                $libelle = $lesFrais['libelle'];
+                $montant = $lesFrais['montant'];
+                $requetePrepare = $this->connexion->prepare(
+                    'UPDATE lignefraishorsforfait '
+                    . 'SET lignefraishorsforfait.libelle = :unLibelle, '
+                    . 'lignefraishorsforfait.date = :uneDate, '
+                    . 'lignefraishorsforfait.montant = :unMontant '
+                    . 'WHERE lignefraishorsforfait.idutilisateur = :unIdVisiteur '
+                    . 'AND lignefraishorsforfait.mois = :unMois '
+                    . 'AND lignefraishorsforfait.id = :unIdFraisHF'
+                );
+                $requetePrepare->bindParam(':unLibelle', $libelle, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':uneDate', $date, PDO::PARAM_STR);
+                $requetePrepare->bindParam(':unMontant', $montant, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unIdFraisHF', $idFraisHF, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
+                $requetePrepare->execute();
+            }
+        }
+
+    /**
+     * Méthode permettant de valider les frais dans le tableau passé en paramètre
+     * @param $idVisiteur
+     * @param $mois
+     * @param $lesFrais
+     * @return void
+     */
+    public function validerFraisForfait($idVisiteur, $mois, $lesFrais): void {
+        $lesCles = array_keys($lesFrais);
+        foreach ($lesCles as $unIdFrais) {
+            $idFrais = $lesFrais[$unIdFrais];
+            $requetePrepare = $this->connexion->prepare(
+                    'UPDATE lignefraisforfait '
+                    . 'SET lignefraisforfait.estValide = 1 '
+                    . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
+                    . 'AND lignefraisforfait.mois = :unMois '
+                    . 'AND lignefraisforfait.idfraisforfait = :idFrais'
             );
-            $requetePrepare->bindParam(':uneQte', $qte, PDO::PARAM_INT);
             $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
             $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
-            $requetePrepare->bindParam(':idFrais', $unIdFrais, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':idFrais', $idFrais, PDO::PARAM_STR);
+            $requetePrepare->execute();
+
+        }
+    }
+
+    /**
+     * Méthode récupérant les frais forfaits étant valide
+     * @param $idVisiteur
+     * @param $mois
+     * @return array
+     */
+    public function getLesFraisForfaitValide($idVisiteur, $mois): array {
+        $requetePrepare = $this->connexion->prepare(
+            'SELECT lignefraisforfait.idfraisforfait as idfrais '
+            . 'FROM lignefraisforfait '
+            . 'WHERE lignefraisforfait.idutilisateur = :unIdVisiteur '
+            . 'AND lignefraisforfait.mois = :unMois '
+            . 'AND lignefraisforfait.estValide = 1 '
+            . 'ORDER BY lignefraisforfait.idfraisforfait'
+        );
+        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        return $requetePrepare->fetchAll();
+    }
+
+    /**
+     * Méthode permettant de passer une fiche frais à l'état VA et enregistrer la date de l'opération
+     * @param $idVisiteur
+     * @param $mois
+     * @return void
+     */
+    public function validerFicheFrais($idVisiteur,$mois): void {
+        $lesInfos = $this->getLesInfosFicheFrais($idVisiteur, $mois);
+        if(($lesInfos['idEtat']!="VA") || ($lesInfos['idEtat']!="CR") || ($lesInfos['idEtat']!="RB") || ($lesInfos['idEtat']!="MP")){
+            $requetePrepare = $this->connexion->prepare(
+                'UPDATE fichefrais '
+                . 'SET fichefrais.datemodif = CAST(now() AS DATE), '
+                . 'fichefrais.idetat = "VA" '
+                . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
+                . 'AND fichefrais.mois = :unMois '
+            );
+            $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
             $requetePrepare->execute();
         }
     }
@@ -517,38 +676,57 @@ class PdoGsb
     }
 
     /**
-     * Supprime le frais hors forfait dont l'id est passé en argument
+     * Refuse le frais hors forfait dont l'id est passé en argument
      *
      * @param String $idFrais ID du frais
      *
      * @return null
      */
-    public function supprimerFraisHorsForfait($idFrais): void {
-        $requetePrepare = $this->connexion->prepare(
-                'DELETE FROM lignefraishorsforfait '
+    public function refuserFraisHorsForfait($idFrais): void {
+        if($this->getEtatValidationFraisHorsForfait($idFrais)==null){
+            $requetePrepare = $this->connexion->prepare(
+                'UPDATE lignefraishorsforfait '
+                . 'SET lignefraishorsforfait.estValide = 0 '
                 . 'WHERE lignefraishorsforfait.id = :unIdFrais'
-        );
-        $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
-        $requetePrepare->execute();
+            );
+            $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
+            $requetePrepare->execute();
+        }
     }
-    
-    
-/**
-     * modifier le frais hors forfait dont l'id est passé en argument
-     *
-     * @param String $idFrais ID du frais
-     * @param String $libelle    Libellé du frais
-     * @param String $dateFrais       Date du frais au format français jj//mm/aaaa
-     * @param Float  $montant    Montant du frais
-     *
-     * @return null
+
+    /**
+     * Valide le frais hors forfait dont l'id est passé en argument
+     * @param $idFrais
+     * @return void
      */
-    public function updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant): void {
+    public function validerFraisHorsForfait($idFrais): void {
+        $etatFrais = $this->getEtatValidationFraisHorsForfait($idFrais);
+        if($etatFrais['estValide']==null){
+            $requetePrepare = $this->connexion->prepare(
+                'UPDATE lignefraishorsforfait '
+                . 'SET lignefraishorsforfait.estValide = 1 '
+                . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+            );
+            $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
+            $requetePrepare->execute();
+        }
+    }
+
+    /**
+     * modifier le frais hors forfait dont l'id est passé en argument
+     * @param $idFrais
+     * @param $libelle
+     * @param $dateFrais
+     * @param $montant
+     * @return void
+     */
+    public function updateFraisHorsForfait($idFrais,$libelle,$dateFrais,$montant): void
+    {
         $dateFr = Utilitaires::dateFrancaisVersAnglais($dateFrais);
         $requetePrepare = $this->connexion->prepare(
-                'UPDATE lignefraishorsforfait '
-                . 'SET libelle = :unLibelle, date = :uneDateFr, montant = :unMontant '
-                . 'WHERE lignefraishorsforfait.id = :unIdFrais'
+            'UPDATE lignefraishorsforfait '
+            . 'SET libelle = :unLibelle, date = :uneDateFr, montant = :unMontant '
+            . 'WHERE lignefraishorsforfait.id = :unIdFrais'
         );
         $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_INT);
         $requetePrepare->bindParam(':unLibelle', $libelle, PDO::PARAM_STR);
@@ -556,7 +734,47 @@ class PdoGsb
         $requetePrepare->bindParam(':unMontant', $montant, PDO::PARAM_INT);
         $requetePrepare->execute();
     }
-    
+
+    /**
+     * Reporte un frais hors forfait qui n'a pas été validé ni refusé au mois suivant
+     * @param $idFraisHF
+     * @param $idVisiteur
+     * @param $date
+     * @param $dateFrais
+     * @return void
+     * @throws \Exception
+     */
+    public function reporterFraisHorsForfait($idFraisHF,$idVisiteur,$date,$dateFrais): void
+    {
+        $mois = Utilitaires::getMois($date);
+        $tableauEtat= $this->getEtatValidationFraisHorsForfait($idVisiteur,$mois,$idFraisHF);
+        if(($tableauEtat['estValide'] == null)){
+            $dateConverti = Utilitaires::dateFrancaisVersAnglais($date);
+            $nouvelleDate = date('d/m/Y',strtotime( '+ 1 months',strtotime($dateConverti)));
+            $moisSuivant = Utilitaires::getMois($nouvelleDate);
+            $ficheMoisSuivant = $this->getLesInfosFicheFrais($idVisiteur, $moisSuivant);
+            if (!$ficheMoisSuivant){
+                $this->creeNouvellesLignesFrais($idVisiteur,$moisSuivant);
+            }
+            $dateFrais = new DateTime(Utilitaires::dateFrancaisVersAnglais($dateFrais));
+            $dateAjd = new DateTime(Utilitaires::dateFrancaisVersAnglais(date('d/m/Y')));
+            if(($dateAjd->diff($dateFrais)->format('%y'))>=1){
+                $this->supprimerFraisHorsForfait($idFraisHF);
+                Utilitaires::ajouterErreur("Le frais hors forfait date d'y a plus d'un an, il a donc été supprimé");
+            }else{
+                $requetePrepare = $this->connexion->prepare(
+                    'UPDATE lignefraishorsforfait '
+                    . 'SET mois = :unMois '
+                    . 'WHERE lignefraishorsforfait.id = :unIdFrais '
+                );
+                $requetePrepare->bindParam(':unIdFrais', $idFraisHF, PDO::PARAM_INT);
+                $requetePrepare->bindParam(':unMois', $moisSuivant, PDO::PARAM_INT);
+                $requetePrepare->execute();
+            }
+        }
+    }
+
+
     /**
      * Retourne les mois pour lesquel un visiteur a une fiche de frais
      *
@@ -597,7 +815,7 @@ class PdoGsb
      * @return un tableau avec des champs de jointure entre une fiche de frais
      *         et la ligne d'état
      */
-    public function getLesInfosFicheFrais($idVisiteur, $mois): array {
+    public function getLesInfosFicheFrais($idVisiteur, $mois): array|bool {
         $requetePrepare = $this->connexion->prepare(
                 'SELECT fichefrais.idetat as idEtat, '
                 . 'fichefrais.datemodif as dateModif,'
@@ -628,7 +846,7 @@ class PdoGsb
      */
     public function majEtatFicheFrais($idVisiteur, $mois, $etat): void {
         $requetePrepare = $this->connexion->prepare(
-                'UPDATE ficheFrais '
+                'UPDATE fichefrais '
                 . 'SET idetat = :unEtat, datemodif = now() '
                 . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
                 . 'AND fichefrais.mois = :unMois'
@@ -638,12 +856,123 @@ class PdoGsb
         $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
         $requetePrepare->execute();
     }
-    public function getFicheFraisEtat(int $idVisiteurMois):array {
-         $requestPrepare = $this->connexion->prepare(
-           'select idetat from fichefrais WHERE CONCAT(idutilisateur,mois) = :unIdVisiteurMois'
-           );
-         $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
-         $requestPrepare->execute();
-         return $requestPrepare->fetch();
+
+    /**
+     * Méthode permettant de récupérer toutes les fiches de frais validées
+     * @return array|false
+     */
+    public function getFichesValidees() {
+        $requestPrepare = $this->connexion->prepare(
+            'SELECT fichefrais.idutilisateur, fichefrais.mois, fichefrais.montantvalide, '
+            . 'fichefrais.datemodif, fichefrais.idetat, utilisateur.nom, utilisateur.prenom '
+            . 'FROM fichefrais INNER JOIN utilisateur on fichefrais.idutilisateur = utilisateur.id '
+            . 'WHERE fichefrais.idetat = "VA"'
+        );
+        $requestPrepare->execute();
+        return $requestPrepare->fetchAll();
     }
+
+    public function getTotauxFicheFraisHorsForfait(int $idVisiteur, int $mois) {
+        $requestPrepare = $this->connexion->prepare(
+            'select coalesce(sum(montant),0) as cumul from lignefraishorsforfait '
+            . "where lignefraishorsforfait.idutilisateur = :unId "
+            . "and lignefraishorsforfait.mois = :unMois "
+            . "and lignefraishorsforfait.estValide = 1 ");
+        $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        $ligne1 = $requestPrepare->fetch();
+        $cumulMontantHF = $ligne1['cumul'];
+        return $cumulMontantHF;
+    }
+
+    public function getTotauxFicheFraisForfait(int $idVisiteur, int $mois) {
+        $requestPrepare2  = $this->connexion->prepare(
+            'select coalesce(sum(lignefraisforfait.quantite * fraisforfait.montant), 0) '
+            . 'as cumul '
+            . 'from lignefraisforfait, fraisforfait '
+            . 'where lignefraisforfait.idfraisforfait = fraisforfait.id '
+            . "and lignefraisforfait.idutilisateur = :unId "
+            . "and lignefraisforfait.estValide = 1 "
+            . "and lignefraisforfait.mois = :unMois ");
+        $requestPrepare2->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare2->bindParam(':unMois', $mois, PDO::PARAM_INT);
+        $requestPrepare2->execute();
+        $ligne2 = $requestPrepare2->fetch();
+        $cumulMontantForfait = $ligne2['cumul'];
+        return $cumulMontantForfait;
+    }
+
+    /**
+     * Permet de mettre la fiche de frais de l'utilisateur + mois de la fiche frais en mise en paiement
+     * @param int $idVisiteurMois
+     * @return void
+     */
+    public function setFicheFraisMiseEnPaiement(int $idVisiteurMois): void {
+        $date=(date("Y-m-d"));
+        $requestPrepare = $this->connexion->prepare(
+            "UPDATE fichefrais set idetat = 'MP', datemodif = :uneDate WHERE CONCAT(fichefrais.idutilisateur,fichefrais.mois) = :unIdVisiteurMois"
+        );
+        $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
+        $requestPrepare->bindParam(':uneDate', $date);
+        $requestPrepare->execute();
+    }
+    public function getFicheFraisEtat(int $idVisiteurMois):array {
+        $requestPrepare = $this->connexion->prepare(
+            'select idetat from fichefrais WHERE CONCAT(idutilisateur,mois) = :unIdVisiteurMois'
+        );
+        $requestPrepare->bindParam(':unIdVisiteurMois', $idVisiteurMois, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        return $requestPrepare->fetch();
+    }
+
+    /**
+     * Méthode permettant de récupérer toutes les fiches frais de l'utilisateur en paramètre
+     * @param int $idVisiteur
+     * @return array
+     */
+    public function  getUtilisateurFicheFrais(int $idVisiteur): array {
+        $requestPrepare = $this->connexion->prepare(
+            "select distinct utilisateur.nom, utilisateur.prenom, utilisateur.id from lignefraisforfait inner join utilisateur on lignefraisforfait.idutilisateur=utilisateur.id where lignefraisforfait.idutilisateur = :unId "
+        );
+        $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        return $requestPrepare->fetch();
+    }
+
+    /**
+     * Méthode permettant de récupérer toutes les fiches frais validées de l'utilisateur en paramètre
+     * @param int $idVisiteur
+     * @return array
+     */
+    public function  getUtilisateurFicheFraisValidee(int $idVisiteur): array {
+        $requestPrepare = $this->connexion->prepare(
+            "select distinct utilisateur.nom, utilisateur.prenom, utilisateur.id, fichefrais.mois from lignefraisforfait inner join utilisateur on lignefraisforfait.idutilisateur=utilisateur.id inner join fichefrais on lignefraisforfait.idutilisateur = fichefrais.idutilisateur  where lignefraisforfait.idutilisateur = :unId and fichefrais.idetat='VA' "
+        );
+        $requestPrepare->bindParam(':unId', $idVisiteur, PDO::PARAM_INT);
+        $requestPrepare->execute();
+        return $requestPrepare->fetch();
+    }
+
+    /**
+     * Corrige le nombre de justificatifs par rapport a un idVisiteur et mois
+     * @param $idVisiteur
+     * @param $mois
+     * @param $valeur
+     * @return void
+     */
+    public function  corrigerNbJustificatifs($idVisiteur,$mois,$valeur): void {
+        $requetePrepare = $this->connexion->prepare(
+            'UPDATE fichefrais '
+            . 'SET nbjustificatifs = :uneValeur '
+            . 'WHERE fichefrais.idutilisateur = :unIdVisiteur '
+            . 'AND fichefrais.mois = :unMois'
+        );
+        $requetePrepare->bindParam(':uneValeur', $valeur, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_INT);
+        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_INT);
+        $requetePrepare->execute();
+    }
+
+
 }

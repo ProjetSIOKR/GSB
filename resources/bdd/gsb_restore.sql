@@ -22,10 +22,10 @@ Sécurité mot de passe:
 -- Administration de la base de données
 CREATE DATABASE gsb_frais ;
 GRANT SHOW DATABASES ON *.* TO visiteur@localhost IDENTIFIED BY 'visiteur';
-GRANT ALL PRIVILEGES ON `gsb_frais`.* TO visiteur@localhost;
+GRANT SELECT,UPDATE,DELETE,INSERT PRIVILEGES ON `gsb_frais`.* TO visiteur@localhost;
 
 GRANT SHOW DATABASES ON *.* TO comptable@localhost IDENTIFIED BY 'comptable';
-GRANT ALL PRIVILEGES ON `gsb_frais`.* TO comptable@localhost;
+GRANT SELECT,UPDATE,DELETE,INSERT PRIVILEGES ON `gsb_frais`.* TO comptable@localhost;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 USE gsb_frais ;
 
@@ -64,14 +64,13 @@ CREATE TABLE IF NOT EXISTS utilisateur (
   FOREIGN KEY (id_role) REFERENCES role(id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS securisationConnexion (
-     id int NOT NULL,
-    tentative_mdp_id int(5) DEFAULT 0,
-    tentative_a2f int(5) DEFAULT 0,
-    bloque boolean NOT NULL default false,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES utilisateur(id)
-)ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS securisationconnexion (
+ id int(11) NOT NULL,
+ tentative_mdp_id int(5) DEFAULT 0,
+ tentative_a2f int(5) DEFAULT 0,
+ bloque tinyint(1) NOT NULL DEFAULT 0,
+ date datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS fichefrais (
   idutilisateur int NOT NULL,
@@ -117,7 +116,8 @@ INSERT INTO etat (id, libelle) VALUES
 ('RB', 'Remboursée'),
 ('CL', 'Saisie clôturée'),
 ('CR', 'Fiche créée, saisie en cours'),
-('VA', 'Validée et mise en paiement');
+('VA', 'Validée');
+('MP', 'Mise en paiement');
 
 INSERT INTO role (id, libelle) VALUES
 (0, 'Visiteur'),

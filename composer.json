@@ -29,5 +29,14 @@
         "psr-4": {
             "Sources\\": "tests"
         }
+    },
+    "require": {
+        "twig/twig": "^3.4",
+        "symfony/routing": "^6.2",
+        "symfony/http-foundation": "^6.2",
+        "symfony/yaml": "^6.2",
+        "symfony/config": "^6.2",
+        "doctrine/annotations": "^1.13",
+        "doctrine/cache": "^2.2"
     }
 }

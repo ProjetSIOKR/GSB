@@ -1,63 +1,34 @@
 <?php
-
-/**
- * Index du projet GSB
- *
- * PHP Version 8
- *
- * @category  PPE
- * @package   GSB
- * @author    Réseau CERTA <contact@reseaucerta.org>
- * @author    José GIL <jgil@ac-nice.fr>
- * @copyright 2017 Réseau CERTA
- * @license   Réseau CERTA
- * @version   GIT: <0>
- * @link      http://www.reseaucerta.org Contexte « Laboratoire GSB »
-*/
-
-use Modeles\PdoGsb;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Bundle\FrameworkBundle\Routing\AnnotatedRouteControllerLoader;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
+use Composer\Autoload\ClassLoader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Outils\Utilitaires;
-
-require '../vendor/autoload.php';
+session_start();
 require '../config/define.php';
 
-session_start();
+/** @var ClassLoader $loader */
+$loader = require  '../vendor/autoload.php';
+AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+$loader = new AnnotationDirectoryLoader(
+    new FileLocator(__DIR__.'/../src/Controller/'),
+    new AnnotatedRouteControllerLoader(
+        new AnnotationReader()
+    )
+);
 
-$pdo = PdoGsb::getPdoGsb();
-$estConnecte = Utilitaires::estConnecte();
-
-require PATH_VIEWS . 'v_entete.php';
-
-$uc = filter_input(INPUT_GET, 'uc', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-if ($uc && !$estConnecte) {
-    if($uc!=='hacher'){
-        $uc = 'connexion';
-    }
-
-} elseif (empty($uc)) {
-    $uc = 'accueil';
-}
-
-switch ($uc) {
-    case 'connexion':
-        include PATH_CTRLS . 'c_connexion.php';
-        break;
-    case 'accueil':
-        include PATH_CTRLS . 'c_accueil.php';
-        break;
-    case 'gererFrais':
-        include PATH_CTRLS . 'c_gererFrais.php';
-        break;
-    case 'etatFrais':
-        include PATH_CTRLS . 'c_etatFrais.php';
-        break;
-    case 'deconnexion':
-        include PATH_CTRLS . 'c_deconnexion.php';
-        break;
-    default:
-        Utilitaires::ajouterErreur('Page non trouvée, veuillez vérifier votre lien...');
-        include PATH_VIEWS . 'v_erreurs.php';
-        break;
-}
-require PATH_VIEWS . 'v_pied.php';
+$routes = $loader->load(__DIR__.'/../src/Controller/');
+$context = new RequestContext();
+$context->fromRequest(Request::createFromGlobals());
+$matcher = new UrlMatcher($routes, $context);
+$parameters = $matcher->match($context->getPathInfo());
+$controllerInfo = explode('::',$parameters['_controller']);
+$controller = new $controllerInfo[0];
+$action = $controllerInfo[1];
+$controller->$action();
+$estConnecte =Utilitaires::estConnecte();

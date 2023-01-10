@@ -62,4 +62,10 @@ class EtatFraisController{
             'dateModif'=>$dateModif,
         ));
     }
+      
+       #[Route('/telechargeretatfrais', name: 'app_telecharger_frais')]
+      public function telechargerEtatFrais(): void {
+          MyTwig::afficheVue('EtatFraisView/testPDF.php');
+          //utiliser include
+      }
 }

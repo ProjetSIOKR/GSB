@@ -1,4 +1,4 @@
 <?php
 
-define('PATH_VIEWS', '../src/Vues/');
-define('PATH_CTRLS', '../src/Controleurs/');
+define('PATH_VIEWS', '../src/Views/');
+define('PATH_CTRLS', '../src/Controller/');

@@ -1,0 +1,181 @@
+<hr>
+<div class="row">
+    <div class="panel panel-orange">
+        <div class="panel-heading">Descriptif des éléments hors forfait</div>
+        <table class="table table-bordered table-responsive">
+            <thead>
+            <tr>
+                <th class="date">Date</th>
+                <th class="libelle">Libellé</th>
+                <th class="montant">Montant</th>
+                <th class="action">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set idForm = 1 %}
+            {% for unFrais in LesFraisHorsForfait %}
+                    <tr id="lesFraisHF">
+                        <td><form id="{{ idForm }}"><input type="text" id="idFraisHF" name="idFrais" data_id="{{unFrais.id}}" hidden/><input type="text" id="dateFraisHF" name="dateFrais" value="{{unFrais.date}}" {{ etatFiche != 'CL' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></form></td>
+                        <td><input form="{{ idForm }}" type="text" id="libelleFraisHF" name="libelle" value="{{ (unFrais.estValide is same as 0) ? 'REFUSER' : '' }} {{unFrais.libelle|e}}" {{ etatFiche != 'CL' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }} /></td>
+                        <td><input form="{{ idForm }}" type="text" id="montant" name="montant" value="{{unFrais.montant}}" {{ etatFiche != 'CL' ? 'disabled' : '' }} {{ (unFrais.estValide is same as 0) or (unFrais.estValide == 1) ? 'disabled' : '' }}/></td>
+                        <td>
+                            {% if etatFiche == 'CL' %}
+                                {% if (unFrais.estValide is null) %}
+                                    <span class="btn btn-success btnCorriger">Corriger</span>
+                                    <span class="btn btn-success btnValider">Valider</span>
+                                    <span class="btn btn-danger btnReporter">Reporter</span>
+                                    <span class="btn btn-danger btnRefuser">Refuser</span>
+                                    <button form="{{ idForm }}" class="btn btn-danger" type="reset">Réinitialiser</button>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% set idForm = idForm + 1 %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <form>
+        <div>
+            <label for="nbJustificatifs">Nombre de justificatifs:</label>
+            <input id="nbJustificatifs" type="number" min="1" value="{{ nbJustificatifs }}" {{ etatFiche != 'CL' ? 'disabled' : '' }}>
+        </div>
+        <br>
+        {% if etatFiche == 'CL' %}
+        <span class="btn btn-success btnJustificatifs">Corriger</span>
+        <button class="btn btn-danger" type="reset">Réinitialiser</button>
+        {% endif %}
+    </form>
+</div>
+<br>
+<script>
+    $(document).ready(function() {
+    });
+    $('.btnCorriger').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        inputDate = td.find('#dateFraisHF');
+        inputLibelle = td.find('#libelleFraisHF');
+        inputMontant = td.find('#montant');
+        id=inputId.attr('data_id');
+        date= inputDate.val()!='' ? inputDate.val() : inputDate.attr('value');
+        libelle= inputLibelle.val()!='' ? inputLibelle.val() : inputLibelle.attr('value');
+        montant = inputMontant.val()!='' ? inputMontant.val() : inputMontant.attr('value');
+        leMois = $('#lstMois option:selected').val();
+        let objFraisHF = {};
+        objFraisHF['date']=date;
+        objFraisHF['libelle']=libelle;
+        objFraisHF['montant']=montant;
+        jsonlesFraisHF= JSON.stringify(objFraisHF);
+        $.ajax({
+            url: "/corrigerfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+                'mois':leMois,
+                'tabFraisHF':jsonlesFraisHF
+            },
+            success:function(){
+                alert('les modifications ont bien été prises en compte');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnValider').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        id=inputId.attr('data_id');
+        $.ajax({
+            url: "/validerfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+            },
+            success:function(){
+                alert('le frais a bien été validé');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnRefuser').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        id=inputId.attr('data_id');
+        $.ajax({
+            url: "/refuserfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+            },
+            success:function(){
+                alert('le frais a bien été refusé');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnReporter').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        inputDate = td.find('#dateFraisHF');
+        id=inputId.attr('data_id');
+        date= inputDate.val()!='' ? inputDate.val() : inputDate.attr('value');
+        leMois = $('#lstMois option:selected').text();
+        leMoisSansEspace = leMois.replace(/\s/g, '');
+        laDate = ('01/'+leMoisSansEspace);
+        $.ajax({
+            url: "/reporterfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+                'date':laDate,
+                'dateFrais':date,
+            },
+            success:function(){
+                alert('le Frais a été reporté au moins prochain');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnReporter').click(function(){
+        enfant = $(this).parent();
+        parents = enfant.parent();
+        td = parents.children('td');
+        inputId = td.find('#idFraisHF');
+        inputDate = td.find('#dateFraisHF');
+        id=inputId.attr('data_id');
+        date= inputDate.val()!='' ? inputDate.val() : inputDate.attr('value');
+        leMois = $('#lstMois option:selected').text();
+        leMoisSansEspace = leMois.replace(/\s/g, '');
+        laDate = ('01/'+leMoisSansEspace);
+        $.ajax({
+            url: "/reporterfraishorsforfait",
+            type: 'POST',
+            data:{'idFrais':id,
+                'date':laDate,
+                'dateFrais':date,
+            },
+            success:function(){
+                alert('le Frais a été reporté au moins prochain');
+                window.location.reload();
+            }
+        });
+    });
+    $('.btnJustificatifs').click(function(){
+        leMois = $('#lstMois option:selected').val();
+        valeurJustificatifs = $('#nbJustificatifs').val()!=='' ? $('#nbJustificatifs').val() : $('#nbJustificatifs') .attr('value');
+        $.ajax({
+            url: "/corrigernbjustificatifs",
+            type: 'POST',
+            data:{'mois':leMois,
+                'valeurJustificatifs':valeurJustificatifs,
+            },
+            success:function(){
+                alert('le nombre de justificatifs a bien été modifié');
+            }
+        });
+    });
+</script>

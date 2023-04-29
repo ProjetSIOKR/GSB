@@ -1,0 +1,103 @@
+{% extends "layout.html.twig" %}
+{% block entete %}
+    {% include "AppView/entete.html.twig" %}
+{% endblock %}
+{% block contenu %}
+    <h2>Fiches de frais validées</h2>
+    <div class="row">
+                    <table class="table table-striped table-bordered shadow >" id="datatable">
+                        <thead class="thead-orange">
+                        <tr>
+                            <th> </th>
+                            <th>Visiteur</th>
+                            <th>Mois fiche de frais</th>
+                            <th>Montant Validé</th>
+                            <th>Date de validation de la fiche de frais</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for uneFiche in fichesValidees %}
+                                <tr>
+                                    <td><input class="btnselect" type="checkbox" name="{{uneFiche.idutilisateur}}{{uneFiche.mois}}" data_mois="{{ uneFiche.mois }}" data_id="{{ uneFiche.idutilisateur }}" data-toggle="modal" data-target="#modal"></td>
+                                    <td>{{ uneFiche.prenom }} {{ uneFiche.nom }}</td>
+                                    <td>{{ uneFiche.mois }}</td>
+                                    <td>{{ uneFiche.montantvalide }}</td>
+                                    <td>{{ uneFiche.datemodif }}</td>
+                                </tr>
+                             {% endfor %}
+                        </tbody>
+                    </table>
+                <div class="form-group">
+                    <table class="table table-bordered shadow">
+                        <thead class="thead-orange">
+                        <tr>
+                            <th>Visiteur</th>
+                            <th>Total frais forfait</th>
+                            <th>Total frais hors forfait</th>
+                            <th>Total </th>
+                        </tr>
+                        </thead>
+                        <tbody id="details">
+                        </tbody>
+                    </table>
+                    <input id="ok" type="submit" value="Valider" class="btn btn-success"
+                           role="button">
+                    <input id="btnannuler" type="reset" value="Effacer" class="btn btn-danger"
+                           role="button">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable();
+        });
+        $('#btnannuler').click(function(){
+            $('.btnselect').prop("checked",false);
+            document.getElementById('details').innerHTML = "";
+       });
+        $('.btnselect').click(function(){
+            id = $(this).attr('data_id');
+            console.log(id);
+            mois = $(this).attr('data_mois');
+            detail = $('#details');
+
+            if ($(this).is(':checked')){
+                $.ajax({
+                    url: "/suivipaiement/ajax",
+                    type: 'POST',
+                    data:{'id':id, 'mois':mois
+                    },
+                    success:function(result){
+                        detail.append(result);
+                    }
+                });
+            }
+            else{
+                document.getElementById(id).remove();
+            }
+        })
+        $('#ok').click(function(){
+            idVisiteurMois= [];
+            details = $('#details').children('tr');
+            details.each(function(){
+                id = $(this).attr('data_id');
+                mois = $(this).attr('data_mois');
+                visiteurmois = id+mois;
+                idVisiteurMois.push(visiteurmois);
+            });
+            jsonVisiteurs = JSON.stringify(idVisiteurMois);
+            $.ajax({
+                url: "/misenpaiement",
+                type: 'POST',
+                data:{'idVisiteurMois': jsonVisiteurs
+                },
+                success:function(){
+                    alert('Les fiches seléctionnées sont maintenant en Mise en Paiement !');
+                    window.location.href='/suivipaiement';
+                }
+            });
+            document.getElementById(id).remove();
+        })
+    </script>
+{% endblock %}

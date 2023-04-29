@@ -1,0 +1,65 @@
+{% extends "layout.html.twig" %}
+{% block entete %}
+    {% include "AppView/entete.html.twig" %}
+{% endblock %}
+{% block contenu %}
+    <div class="form-group form-inline w-50">
+                <label for="visiteur"> Choisir le Visiteur : </label>
+                <select id="lesVisiteurs" name="lesVisiteurs" class="form-control infos">
+                    <option selected disabled>Choisir un Visiteur</option>
+                    {% for unVisiteur in lesVisiteurs %}
+                        {% if unVisiteur ==  null%}
+                            <option value="{{ unVisiteur.id }}">
+                                {{unVisiteur.nom}} {{unVisiteur.prenom}}
+                            </option>
+                        {% else %}
+                            <option value="{{ unVisiteur.id }}">
+                                {{unVisiteur.nom}} {{unVisiteur.prenom}}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <label for="lstMois" accesskey="n">Mois : </label>
+                <select id="lstMois" name="lstMois" class="form-control infos">
+                    {% for mois in lesMois %}
+                        {% if mois ==  moisASelectionner%}
+                            <option selected value="{{ mois.date }}">
+                                {{mois.dateaffichage}}
+                            </option>   
+                        {% else %}
+                            <option value="{{ mois.date }}">
+                                {{mois.dateaffichage}}
+                            </option> 
+                        {% endif %}
+                    {% endfor %}
+                </select>
+   </div>
+    <div class="row">
+        <h2 class="orange"> Valider la fiche de frais</h2>
+        <h3>Eléments forfaitisés</h3>
+        <section id="detailsVisiteur">
+        </section>
+        {% include "AppView/erreurs.html.twig" %}
+        {% include "FraisView/validerlistefraisforfait.html.twig" %}
+    </div>
+    <script>
+        $(document).ready(function () {
+        });
+        $('.infos').change(function(){
+            visiteur = $('#lesVisiteurs option:selected').val();
+            leMois = $('#lstMois option:selected').val();
+            detailsVisiteur = $('#detailsVisiteur');
+            $.ajax({
+                url: "/validerfichefrais/recupererinfos",
+                type: 'POST',
+                data:{'idVisiteur': visiteur,
+                    'mois': leMois
+                },
+                success:function(result){
+                    detailsVisiteur.empty();
+                    detailsVisiteur.append(result);
+                }
+            });
+        });
+    </script>
+{% endblock %}
